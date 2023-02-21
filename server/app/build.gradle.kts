@@ -10,6 +10,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -23,6 +24,18 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
+    // Ktor
+    implementation("io.ktor:ktor-server-core-jvm:2.2.3")
+    implementation("io.ktor:ktor-server-netty-jvm:2.2.3")
+     implementation("io.ktor:ktor-server-content-negotiation:2.2.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.3")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.3")
+    implementation("io.ktor:ktor-server-default-headers-jvm:2.2.3")
+    implementation("io.ktor:ktor-client-core:2.2.3")
+    implementation("io.ktor:ktor-client-cio:2.2.3")
+    implementation("io.ktor:ktor-server-cors:2.2.3")
+    // Logback
+    implementation("ch.qos.logback:logback-classic:1.4.5")
 }
 
 testing {

@@ -2,17 +2,22 @@ import { useState, useRef, FormEvent, Dispatch } from "react"
 import { Book } from "./book"
 import "./header.css"
 
+const bookCover = async (url: string): Promise<string> => {
+    let response = await fetch(url, {
+        method: 'GET'
+    })
+    let imageBlob = await response.blob()
+    let newUrl = URL.createObjectURL(imageBlob)
+
+    return newUrl
+}
+
 const search = async (title: string): Promise<unknown> => {
     console.log(`Searching for ${title}`)
-    let response = await fetch(`http://127.0.0.1:8000/books`, {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json;charset=UTF-8',
-          },
-          body: JSON.stringify({
-            title
-          })
+    let response = await fetch(`http://127.0.0.1:8080/libgen/${title}`, {
+        method: 'GET',
     });
+    response = await response.json()
     return response
 }
 
@@ -21,12 +26,15 @@ const HeaderComponent = ({ setBooks }: { setBooks: Dispatch<Book[]> }) => {
     const [error, _setError] = useState<boolean>(false)
     const searchTerm = useRef<string>("")
 
-    const onSearch = (event: FormEvent<HTMLFormElement>) => {
+    const onSearch = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        search(searchTerm.current)
-            .then(_ => console.log("Got response!"))
-            .catch(err => console.log(err))
+        let response = await search(searchTerm.current) 
+        let books = response as Book[]
+        for (let i = 0; i < books.length; ++i) {
+            books[i].coverurl = await bookCover(books[i].coverurl)
+        }
+        setBooks(response as Book[])
     }
 
     return (

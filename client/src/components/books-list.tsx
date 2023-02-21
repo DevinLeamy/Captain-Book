@@ -12,9 +12,9 @@ const BooksListComponent = ({ books }: { books: Book[] }) => {
 }
 const BookComponent = ({ title, author, coverurl, md5 }: Book) => {
     return (
-        <div className="book">
+        <div className="book" key={md5}>
             <img
-                src={`http://booksdescr.org/covers/${coverurl}`}
+                src={coverurl}
                 alt="Book Cover"
                 className="book-cover"
             />
