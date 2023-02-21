@@ -1,19 +1,30 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
-#[macro_use]
-extern crate rocket;
-
 use std::path::PathBuf;
 
 use anyhow::Result;
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
+use axum_macros::debug_handler;
+// use futures::executor::block_on;
+use http::{header, Method, Request, Response};
 use libgen::api::{
     book::Book,
     mirrors::{Mirror, MirrorList, MirrorType},
     search::{Search, SearchOption},
 };
 use reqwest::Client;
-use rocket::fairing::{self, AdHoc};
-use rocket::serde::json::Json;
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+use tower::{Service, ServiceBuilder, ServiceExt};
+use tower_http::cors::{any, CorsLayer};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct BookQuery {
+    title: String,
+}
 
 pub fn parse_mirrors() -> MirrorList {
     let path = PathBuf::from("./mirror.json");
@@ -40,8 +51,7 @@ pub async fn search(
         results: 100,
         search_option: query,
     };
-    let results = search.search(&client).await?;
-    Ok(results)
+    search.search(&client).await
 }
 
 struct Server {
@@ -55,30 +65,39 @@ struct LibgenConfig {
     mirrors: MirrorList,
 }
 
-#[get("/<title>")]
-async fn query(title: String) -> Option<Json<Vec<Book>>> {
-    let server = Server {
-        client: Client::new(),
-        config: LibgenConfig {
-            mirrors: parse_mirrors(),
-        },
-    };
+#[debug_handler]
+async fn post_books(Json(query): Json<BookQuery>) {
+    let client = Client::new();
+    let mirrors = parse_mirrors();
+    println!("Query for {:?}", query);
+    let title = query.title;
+    let books = tokio::runtime::Runtime::new().unwrap().block_on(search(
+        &client,
+        &mirrors,
+        SearchOption::Title,
+        title,
+    ));
+    let books = books.unwrap();
 
-    let query = SearchOption::Title;
-    let books = search(&server.client, &server.config.mirrors, query, title)
+    println!("Books {:?}", books);
+}
+
+async fn get_hello() {
+    println!("Hello axium");
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/hello", get(get_hello))
+        .route("/books", post(post_books))
+        .layer(CorsLayer::very_permissive());
+
+    let address = SocketAddr::from(([127, 0, 0, 1], 8000));
+
+    println!("Listening on localhost:8000");
+    axum::Server::bind(&address)
+        .serve(app.into_make_service())
         .await
         .unwrap();
-
-    Some(Json(books))
-}
-
-fn stage() -> AdHoc {
-    AdHoc::on_ignite("ymael", |rocket| async {
-        rocket.mount("/title", routes![query])
-    })
-}
-// https://github.com/SergioBenitez/Rocket/blob/v0.5-rc/examples/databases/src/sqlx.rs
-#[launch]
-fn rocket() -> _ {
-    rocket::build().attach(stage())
 }
