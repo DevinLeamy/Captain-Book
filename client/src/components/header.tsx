@@ -31,10 +31,10 @@ const HeaderComponent = ({ setBooks }: { setBooks: Dispatch<Book[]> }) => {
 
         let response = await search(searchTerm.current) 
         let books = response as Book[]
-        for (let i = 0; i < books.length; ++i) {
-            books[i].coverurl = await bookCover(books[i].coverurl)
-        }
-        setBooks(response as Book[])
+        // for (let i = 0; i < books.length; ++i) {
+        //     books[i].coverurl = await bookCover(books[i].coverurl)
+        // }
+        setBooks(books)
     }
 
     return (

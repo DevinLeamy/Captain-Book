@@ -17,6 +17,7 @@ const BookComponent = ({ title, author, coverurl, md5 }: Book) => {
                 src={coverurl}
                 alt="Book Cover"
                 className="book-cover"
+                referrerPolicy="no-referrer"
             />
             <div className="info">
                 <p className="book-title">{title}</p>
