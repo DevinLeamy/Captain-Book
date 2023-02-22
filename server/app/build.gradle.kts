@@ -50,5 +50,5 @@ testing {
 
 application {
     // Define the main class for the application.
-    mainClass.set("server.AppKt")
+    mainClass.set("server.ApplicationKt")
 }

@@ -10,6 +10,9 @@ val libgen = LibgenAPI()
 
 fun Route.libgenRouting() {
     route("/libgen") {
+        /**
+         * Fetch the metadata of all books results from the search query.
+         */
         get("{title?}") {
             val title = call.parameters["title"] ?: return@get call.respondText(
                 "Missing book title",
@@ -20,6 +23,21 @@ fun Route.libgenRouting() {
 
             val books = libgen.requestBooksWithTitle(title)
             call.respond(books)
+        }
+
+        /**
+         * Fetch the book with the given md5 hash.
+         */
+        get("/download/{md5?}") {
+            val md5 = call.parameters["md5"] ?: return@get call.respondText(
+                "Missing book md5",
+                status = HttpStatusCode.BadRequest
+            )
+
+            println("Fetching book with md5: $md5")
+
+            val bookDownload = libgen.downloadBookByMd5(md5, "book")
+            call.respondFile(bookDownload.get())
         }
     }
 }
