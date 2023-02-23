@@ -5,8 +5,10 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import server.libgen.LibgenAPI
+import server.store
 
 val libgen = LibgenAPI()
+
 
 fun Route.libgenRouting() {
     route("/libgen") {
@@ -34,10 +36,24 @@ fun Route.libgenRouting() {
                 status = HttpStatusCode.BadRequest
             )
 
+            // Return book that has already been downloaded.
+            if (store.downloadedBooks.containsKey(md5)) {
+                call.respondFile(store.downloadedBooks[md5]!!)
+                return@get
+            }
+
             println("Fetching book with md5: $md5")
 
             val bookDownload = libgen.downloadBookByMd5(md5, "book")
-            call.respondFile(bookDownload.get())
+            if (bookDownload.isEmpty) {
+                call.respondText(
+                    "Failed to fetch book",
+                    status = HttpStatusCode.InternalServerError
+                )
+            } else {
+                store.downloadedBooks[md5] = bookDownload.get()
+                call.respondFile(store.downloadedBooks[md5]!!)
+            }
         }
     }
 }

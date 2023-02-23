@@ -20,7 +20,7 @@ data class Mirror(
     val syncUrl: String = "http://libgen.is/json.php",
     /// Url with "{cover-url}" in place of a cover url.
     val coverUrlPattern: String = "http://libgen.is/covers/{cover-url}",
-    val downloadPattern: String = "http://library.lol/fiction/{md5}"
+    val downloadPattern: String = "http://library.lol/main/{md5}"
 )
 
 @Serializable
@@ -66,7 +66,7 @@ class QueryBuilder(private var baseUrl: String) {
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
-    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/(main|fiction)/.+?(gz|pdf|rar|djvu|epub|chm).+?(gz|pdf|rar|djvu|epub|chm)")
+    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
 
     private val client = HttpClient(CIO)
     private val mirror = Mirror()
@@ -109,6 +109,7 @@ class LibgenAPI {
             method = HttpMethod.Get
         }
         val downloadPageContent = response.bodyAsText()
+        println(downloadPageContent)
         val downloadUrl = REGEX_LOL_DOWNLOAD.find(downloadPageContent)?.value ?: return Optional.empty()
         val bookResponse = client.request(downloadUrl) {
             method = HttpMethod.Get
@@ -142,5 +143,3 @@ class LibgenAPI {
         return Optional.of(books)
     }
 }
-
-// http://library.lol/fiction/922B6DCA045B71343B3F8AE05D23BC64
