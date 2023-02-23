@@ -19,16 +19,20 @@ val extensionToMimeType = mapOf(
 class MailClient {
     private val sendgrid = SendGrid(System.getenv("SENDGRID_API_KEY"))
 
-    fun sendEmail(mail: Mail) {
+    fun sendEmail(mail: Mail): Result<Unit> {
         val request = Request().apply {
             method = Method.POST
             endpoint = "mail/send"
             body = mail.build()
         }
         val response = sendgrid.api(request)
-        println(response.statusCode)
-        println(response.body)
-        println(response.headers)
+        val success = response.statusCode == 202
+
+        return if (success) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("Failed to send email ${response.headers}"))
+        }
     }
 }
 
@@ -36,26 +40,26 @@ class KindleAPI {
     val mailClient = MailClient()
 
     private fun encodeFileBase64(file: File): String {
-        return Base64.getMimeEncoder().encodeToString(file.readBytes())
+        return Base64.getEncoder().encodeToString(file.readBytes())
     }
     /**
      * Sends the given book to the given email address.
      *
      * See: https://stackoverflow.com/questions/38599079/sendgrid-emailing-api-send-email-attachment
      */
-    suspend fun sendToKindle(email: String, book: File) {
+    fun sendToKindle(email: String, book: File): Result<Unit> {
         val from = Email("devinleamy@gmail.com")
         val to = Email("devinleamy@gmail.com")
         val subject = "Book"
-//        val attachments = Attachments()
-//        attachments.type = extensionToMimeType[book.extension]!!
-//        attachments.content = encodeFileBase64(book)
-//        attachments.disposition = "attachment"
-//        attachments.filename = "book.${book.extension}"
+        val attachments = Attachments()
+        attachments.type = extensionToMimeType[book.extension]!!
+        attachments.content = encodeFileBase64(book)
+        attachments.disposition = "attachment"
+        attachments.filename = "book.${book.extension}"
 
         val mail = Mail(from, subject, to, Content("text/plain", "EBook."))
-//        mail.addAttachments(attachments)
+        mail.addAttachments(attachments)
 
-        mailClient.sendEmail(mail)
+        return mailClient.sendEmail(mail)
     }
 }

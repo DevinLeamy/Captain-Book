@@ -20,7 +20,8 @@ data class Mirror(
     val syncUrl: String = "http://libgen.is/json.php",
     /// Url with "{cover-url}" in place of a cover url.
     val coverUrlPattern: String = "http://libgen.is/covers/{cover-url}",
-    val downloadPattern: String = "http://library.lol/main/{md5}"
+//    val downloadPattern: String = "http://library.lol/main/{md5}"
+    val downloadPattern: String = "https://libgen.rocks/ads.php?md5={md5}"
 )
 
 @Serializable
