@@ -36,6 +36,8 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:2.2.3")
     // Logback
     implementation("ch.qos.logback:logback-classic:1.4.5")
+    // Sendgrid
+    implementation("com.sendgrid:sendgrid-java:4.9.3")
 }
 
 testing {

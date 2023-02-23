@@ -6,6 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import server.kindle.KindleAPI
 import server.store
+import java.io.File
 
 val kindle = KindleAPI()
 
@@ -25,6 +26,10 @@ fun Route.kindleRouting() {
             store.downloadedBooks[md5] = libgen.downloadBookByMd5(md5, "book").get()
 
             val status = kindle.sendToKindle(email, store.downloadedBooks[md5]!!)
+        }
+        get("test") {
+            println(System.getenv("SENDGRID_API_KEY"))
+            kindle.sendToKindle("Email", File("book"))
         }
     }
 }
