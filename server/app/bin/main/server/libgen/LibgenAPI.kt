@@ -1,15 +1,18 @@
 package server.libgen
 
 import io.ktor.client.*
-import io.ktor.client.request.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
+import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
 import io.ktor.util.cio.*
 import io.ktor.utils.io.*
-import kotlinx.serialization.Serializable
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import server.QueryBuilder
@@ -76,25 +79,23 @@ class LibgenAPI {
     /**
      * Fetch the book with the given md5.
      */
-    @OptIn(InternalAPI::class)
     suspend fun downloadBookByMd5(md5: String, fileName: String): Optional<File> {
-        val bookFile = File(fileName)
         val downloadUrl = fetchDownloadUrl(md5).getOrNull() ?: return Optional.empty()
-        val response = client.request(downloadUrl) {
-            method = HttpMethod.Get
-            timeout {
-                requestTimeoutMillis = 90000
-            }
-        }
+        return downloadFile(downloadUrl)
 
-        if (!response.status.isSuccess()) {
-            return Optional.empty()
-        }
-
-        // Write the contents into the book file.
-        response.content.copyAndClose(bookFile.writeChannel())
-
-        return Optional.of(bookFile)
+//        val response = client.request(downloadUrl) {
+//            method = HttpMethod.Get
+//            timeout {
+//                requestTimeoutMillis = 90000
+//            }
+//        }
+//
+//        if (!response.status.isSuccess()) {
+//            return Optional.empty()
+//        }
+//
+//        // Write the contents into the book file.
+//        response.content.copyAndClose(bookFile.writeChannel())
     }
 
     private suspend fun parseBookHash(hash: String): Optional<List<LibgenBook>> {
@@ -138,5 +139,33 @@ class LibgenAPI {
         }
 
         return Optional.empty()
+    }
+
+    private suspend fun downloadFile(fileUrl: String): Optional<File> {
+        val file = File.createTempFile("file", ".tmp")
+        var failed = false
+        client.prepareGet(fileUrl) {
+            timeout {
+                requestTimeoutMillis = 90000
+            }
+        }.execute { response ->
+            if (!response.status.isSuccess()) {
+                failed = true
+                return@execute
+            }
+            val channel: ByteReadChannel = response.body()
+            while (!channel.isClosedForRead) {
+                val packet = channel.readRemaining(limit = DEFAULT_BUFFER_SIZE.toLong())
+                while (!packet.isEmpty) {
+                    file.appendBytes(packet.readBytes())
+                }
+
+                println("Read ${file.length()} of ${response.contentLength()}")
+            }
+        }
+        if (failed) {
+            return Optional.empty()
+        }
+        return Optional.of(file)
     }
 }
