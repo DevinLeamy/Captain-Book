@@ -34,27 +34,7 @@ private val downloadPatterns: List<String> = listOf(
     "https://libgen.rocks/ads.php?md5={md5}",
 )
 
-@Serializable
-data class BookFile(
-    // Extension (epub, MOBI, pdf, etc..)
-    val extension: String,
-)
 
-@Serializable
-data class LibgenBook(
-    val id: String,
-    val title: String,
-    val author: String,
-    val filesize: String,
-    val year: String,
-    val language: String,
-    val pages: String,
-    val publisher: String,
-    val edition: String,
-    val extension: String,
-    val md5: String,
-    var coverurl: String,
-)
 
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
@@ -67,18 +47,17 @@ class LibgenAPI {
     }
     private val mirror = Mirror()
 
-    // Temp
-    suspend fun requestBooksWithTitle(title: String): List<LibgenBook> {
-        val query = QueryBuilder(mirror.searchUrl)
-            .with("req", title)
+    suspend fun search(search: LibgenSearch): List<LibgenBook> {
+        val queryUrl = QueryBuilder(mirror.searchUrl)
+            .with("req", search.query.text)
             .with("lg_topic", "libgen")
             .with("res", "25")
             .with("open", "0")
             .with("view", "simple")
             .with("phrase", "1")
-            .with("column", "title")
+            .with("column", search.query.type.toString())
             .build()
-        val response: HttpResponse = client.request(query) {
+        val response: HttpResponse = client.request(queryUrl) {
             method = HttpMethod.Get
         }
         val contents = response.bodyAsText()
@@ -88,6 +67,7 @@ class LibgenAPI {
             .map { hash -> parseBookHash(hash) }
             .filter { it.isPresent }
             .flatMap { it.get() }
+            .filter { search.filter.passes(it)}
             .toList()
 
         return books

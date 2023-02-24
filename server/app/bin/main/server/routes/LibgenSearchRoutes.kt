@@ -4,11 +4,10 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import server.libgen.LibgenAPI
+import server.libgen.*
 import server.store
 
 val libgen = LibgenAPI()
-
 
 fun Route.libgenRouting() {
     route("/libgen") {
@@ -20,10 +19,20 @@ fun Route.libgenRouting() {
                 "Missing book title",
                 status = HttpStatusCode.BadRequest
             )
+            val search = LibgenSearch(
+                LibgenQuery(
+                    type = QueryType.TITLE,
+                    text = title
+                ),
+                LibgenBookFilter(
+                    languages = listOf("english"),
+                    formats = listOf("epub", "pdf", "mobi")
+                )
+            )
 
             println("Querying for books with title: $title")
 
-            val books = libgen.requestBooksWithTitle(title)
+            val books = libgen.search(search)
             call.respond(books)
         }
 

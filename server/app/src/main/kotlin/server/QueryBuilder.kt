@@ -15,6 +15,8 @@ class QueryBuilder(private var baseUrl: String) {
     }
 
     fun build(): String {
-        return baseUrl
+        // https://stackoverflow.com/questions/5442658/spaces-in-urls
+        val url = baseUrl.replace(" ", "%20")
+        return url
     }
 }
