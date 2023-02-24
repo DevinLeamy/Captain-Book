@@ -1,0 +1,6 @@
+.navbar-container {
+    width: 100%;
+    height: var(--navbar-height);
+    line-height: var(--navbar-height);
+    border-bottom: 1px solid black;
+}

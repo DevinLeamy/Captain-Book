@@ -1,0 +1,50 @@
+body,
+html {
+  margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  padding: 0px;
+  max-width: 800px;
+  margin: auto;
+  scroll-behavior: smooth;
+  font-size: 13px;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+
+  --orange: #FFA500;
+  --white: rgb(245, 245, 245);
+  --blue: rgb(85, 169, 254);
+  --navbar-height: 30px;
+  overflow-y: scroll;
+}
+
+/* Removes blue border of selected buttons */
+*:focus {
+  outline: 0;
+}
+
+/* Remove default style from links */
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+.raised {
+  box-shadow:
+    inset 0 -3em 3em rgba(0, 0, 0, 0.1),
+    /* 0 0  0 2px rgb(255,255,255), */
+    0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+}

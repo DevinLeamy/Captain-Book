@@ -36,8 +36,6 @@ private val downloadPatterns: List<String> = listOf(
     "https://libgen.rocks/ads.php?md5={md5}",
 )
 
-
-
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
