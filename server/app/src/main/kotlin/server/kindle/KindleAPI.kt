@@ -49,10 +49,10 @@ class KindleAPI {
      */
     fun sendToKindle(email: String, book: File): Result<Unit> {
         val from = Email("devinleamy@gmail.com")
-        val to = Email("devinleamy@gmail.com")
+        val to = Email(email)
         val subject = "Book"
         val attachments = Attachments()
-        attachments.type = extensionToMimeType[book.extension]!!
+        attachments.type = extensionToMimeType[book.extension.lowercase()]!!
         attachments.content = encodeFileBase64(book)
         attachments.disposition = "attachment"
         attachments.filename = "book.${book.extension}"

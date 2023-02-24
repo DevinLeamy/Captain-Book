@@ -7,8 +7,6 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.*
-import io.ktor.util.cio.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import server.QueryBuilder
+import server.store
 import java.io.File
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -79,23 +78,14 @@ class LibgenAPI {
     /**
      * Fetch the book with the given md5.
      */
-    suspend fun downloadBookByMd5(md5: String, fileName: String): Optional<File> {
+    suspend fun downloadBookByMd5(md5: String): Optional<File> {
         val downloadUrl = fetchDownloadUrl(md5).getOrNull() ?: return Optional.empty()
-        return downloadFile(downloadUrl)
+        val tempFile = downloadFile(downloadUrl).getOrNull() ?: return Optional.empty()
+        val metadata = store.bookMetadata[md5]!!
+        val bookFile = File.createTempFile(metadata.title, ".${metadata.extension}")
+        tempFile.renameTo(bookFile)
 
-//        val response = client.request(downloadUrl) {
-//            method = HttpMethod.Get
-//            timeout {
-//                requestTimeoutMillis = 90000
-//            }
-//        }
-//
-//        if (!response.status.isSuccess()) {
-//            return Optional.empty()
-//        }
-//
-//        // Write the contents into the book file.
-//        response.content.copyAndClose(bookFile.writeChannel())
+        return Optional.of(bookFile)
     }
 
     private suspend fun parseBookHash(hash: String): Optional<List<LibgenBook>> {
@@ -115,6 +105,7 @@ class LibgenAPI {
         val books = Json.decodeFromString<List<LibgenBook>>(jsonContent)
         books.forEach { book ->
             book.coverurl = mirror.coverUrlPattern.replace("{cover-url}", book.coverurl)
+            store.bookMetadata[book.md5] = book.copy()
         }
 
         return Optional.of(books)
@@ -146,7 +137,7 @@ class LibgenAPI {
         var failed = false
         client.prepareGet(fileUrl) {
             timeout {
-                requestTimeoutMillis = 90000
+                requestTimeoutMillis = 120000
             }
         }.execute { response ->
             if (!response.status.isSuccess()) {
@@ -160,7 +151,7 @@ class LibgenAPI {
                     file.appendBytes(packet.readBytes())
                 }
 
-                println("Read ${file.length()} of ${response.contentLength()}")
+                println("Read ${file.length() / 1000000}mb of ${response.contentLength()!! / 1000000}mb")
             }
         }
         if (failed) {

@@ -5,7 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import server.kindle.KindleAPI
-import java.io.File
+import server.store
 
 val kindle = KindleAPI()
 
@@ -22,10 +22,20 @@ fun Route.kindleRouting() {
             )
 
             // TODO: Should create helper to download and store the book, using the libgen API.
-//            store.downloadedBooks[md5] = libgen.downloadBookByMd5(md5, "book").get()
-            val book = File("/Users/Devin/Desktop/temp/libgen-test/book.epub")
-            val status = kindle.sendToKindle(email, book) // store.downloadedBooks[md5]!!)
-            println("Send to kindle status: $status")
+            if (!store.downloadedBooks.containsKey(md5)) {
+                store.downloadedBooks[md5] = libgen.downloadBookByMd5(md5).get()
+            }
+            val book = store.downloadedBooks[md5]!!
+            val status = kindle.sendToKindle(email, book)
+
+            if (status.isSuccess) {
+                call.respondText("Sent book to kindle")
+            } else {
+                call.respondText(
+                    "Failed to send book",
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
         }
     }
 }

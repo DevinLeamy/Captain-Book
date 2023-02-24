@@ -24,8 +24,20 @@ const fetchBook = async (md5: string): Promise<File | undefined> => {
     fileBlob.lastModifiedDate = new Date()
     fileBlob.name = "book"
     return fileBlob as File
-     
 }
+
+let kindleEmail = "the420kindle@kindle.com"
+const sendToKindle = async (md5: string): Promise<undefined> => {
+    let response = await fetch(`http://localhost:8080/kindle/send/${md5}/${kindleEmail}`, {
+        method: "GET"
+    })
+
+    if (!response.ok) {
+        console.log("Failed to send.")
+        return undefined
+    }
+}
+
 const BookComponent = ({ title, author, coverurl, extension, md5 }: Book) => {
     const [book, setBook] = useState<File>()
     const [useAlternate, setUseAlternate] = useState<boolean>(false)
@@ -38,6 +50,10 @@ const BookComponent = ({ title, author, coverurl, extension, md5 }: Book) => {
 
         setBook(bookFile)
         download(bookFile, `${title}.${extension}`)
+    }
+
+    const onSendToKindle = async () => {
+        await sendToKindle(md5)
     }
 
     return (
@@ -57,6 +73,12 @@ const BookComponent = ({ title, author, coverurl, extension, md5 }: Book) => {
                     onClick={e => onDownload()}
                 >
                     Download
+                </button>
+                <button
+                    className="download"
+                    onClick={e => onSendToKindle()}
+                >
+                    Send to Kindle
                 </button>
             </div>
         </div>

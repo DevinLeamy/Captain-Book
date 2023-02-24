@@ -26,13 +26,15 @@ fun Route.libgenRouting() {
                 ),
                 LibgenBookFilter(
                     languages = listOf("english"),
-                    formats = listOf("epub", "pdf", "mobi")
+                    formats = listOf("epub", "mobi")
                 )
             )
 
             println("Querying for books with title: $title")
 
             val books = libgen.search(search)
+
+            println("Found ${books.size} books matching search")
             call.respond(books)
         }
 
@@ -53,7 +55,7 @@ fun Route.libgenRouting() {
 
             println("Fetching book with md5: $md5")
 
-            val bookDownload = libgen.downloadBookByMd5(md5, "book")
+            val bookDownload = libgen.downloadBookByMd5(md5)
             if (bookDownload.isEmpty) {
                 call.respondText(
                     "Failed to fetch book",
