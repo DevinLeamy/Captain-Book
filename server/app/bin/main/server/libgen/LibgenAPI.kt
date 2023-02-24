@@ -3,6 +3,7 @@ package server.libgen
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
@@ -11,8 +12,10 @@ import io.ktor.utils.io.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import server.QueryBuilder
 import java.io.File
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 data class Mirror(
     val hostUrl: String = "http://libgen.is/",
@@ -20,8 +23,15 @@ data class Mirror(
     val syncUrl: String = "http://libgen.is/json.php",
     /// Url with "{cover-url}" in place of a cover url.
     val coverUrlPattern: String = "http://libgen.is/covers/{cover-url}",
-//    val downloadPattern: String = "http://library.lol/main/{md5}"
-    val downloadPattern: String = "https://libgen.rocks/ads.php?md5={md5}"
+    val downloadPattern: String = "http://library.lol/main/{md5}"
+)
+
+private val downloadPatterns: List<String> = listOf(
+    "http://library.lol/fiction/{md5}",
+    "http://library.lol/main/{md5}",
+    "https://libgen.me/book/{md5}",
+    "http://libgen.lc/get.php?md5={md5}",
+    "https://libgen.rocks/ads.php?md5={md5}",
 )
 
 @Serializable
@@ -46,30 +56,15 @@ data class LibgenBook(
     var coverurl: String,
 )
 
-class QueryBuilder(private var baseUrl: String) {
-    private var isFirstParameter: Boolean = true
-    fun with(key: String, value: String): QueryBuilder {
-        baseUrl += if (isFirstParameter) {
-            isFirstParameter = false
-            "?"
-        } else {
-            "&"
-        }
-        baseUrl += "$key=$value"
-
-        return this
-    }
-
-    fun build(): String {
-        return baseUrl
-    }
-}
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
     private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
+    private val REGEX_HREF = Regex("href=\"http.+\"")
 
-    private val client = HttpClient(CIO)
+    private val client = HttpClient(CIO) {
+        install(HttpTimeout)
+    }
     private val mirror = Mirror()
 
     // Temp
@@ -104,20 +99,20 @@ class LibgenAPI {
     @OptIn(InternalAPI::class)
     suspend fun downloadBookByMd5(md5: String, fileName: String): Optional<File> {
         val bookFile = File(fileName)
-
-        val downloadPageUrl = mirror.downloadPattern.replace("{md5}", md5)
-        val response = client.request(downloadPageUrl) {
+        val downloadUrl = fetchDownloadUrl(md5).getOrNull() ?: return Optional.empty()
+        val response = client.request(downloadUrl) {
             method = HttpMethod.Get
+            timeout {
+                requestTimeoutMillis = 90000
+            }
         }
-        val downloadPageContent = response.bodyAsText()
-        println(downloadPageContent)
-        val downloadUrl = REGEX_LOL_DOWNLOAD.find(downloadPageContent)?.value ?: return Optional.empty()
-        val bookResponse = client.request(downloadUrl) {
-            method = HttpMethod.Get
+
+        if (!response.status.isSuccess()) {
+            return Optional.empty()
         }
 
         // Write the contents into the book file.
-        bookResponse.content.copyAndClose(bookFile.writeChannel())
+        response.content.copyAndClose(bookFile.writeChannel())
 
         return Optional.of(bookFile)
     }
@@ -142,5 +137,26 @@ class LibgenAPI {
         }
 
         return Optional.of(books)
+    }
+
+    private suspend fun fetchDownloadUrl(md5: String): Optional<String> {
+        for (downloadPattern in downloadPatterns) {
+            val downloadPageUrl = downloadPattern.replace("{md5}", md5)
+            val response = client.request(downloadPageUrl) {
+                method = HttpMethod.Get
+            }
+
+            if (!response.status.isSuccess()) {
+                continue
+            }
+            val downloadPageContent = response.bodyAsText()
+            val downloadUrlRaw = REGEX_HREF.find(downloadPageContent)?.value ?: continue
+            val downloadUrl = downloadUrlRaw.substring(6, downloadUrlRaw.length - 1)
+
+            println("Download URL: $downloadUrl")
+            return Optional.of(downloadUrl)
+        }
+
+        return Optional.empty()
     }
 }
