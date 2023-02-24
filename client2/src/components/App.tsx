@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import { HomePage } from "./home/HomePage";
-import { Navbar } from './navbar/Navbar';
+import { Main } from "./Main/Main"
 
 import './App.css';
+import { Navbar } from './navbar/Navbar';
 
 const App = () => {
   return (
@@ -13,7 +13,7 @@ const App = () => {
         <Navbar />
         <div className="page-container">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Main />} />
           </Routes>
         </div>
       </div>
