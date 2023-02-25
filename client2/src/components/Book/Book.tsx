@@ -9,12 +9,11 @@ type BookComponentProps = {
 }
 
 export const BookComponent = ({ book }: BookComponentProps) => {
-    console.log(`[BOOK] ${book.md5}`)
     return (
         <Grid key={book.md5} xs={3} item>
             <Card>
                 <div>{book.title}</div>
-                <img className="book-cover-image" src={book.coverurl}/>
+                <img className="book-cover-image" src={image}/>
                 <div>{book.author}</div>
                 <CardActions>
                     <Button size="medium" variant="contained">Download</Button>
