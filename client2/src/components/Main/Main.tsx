@@ -7,20 +7,16 @@ import { BookComponent } from "../Book/Book"
 import { BookDisplay } from "../BookDisplay/BookDisplay"
 
 import "./Main.css"
+import { LibgenSearch } from "../../types/LibgenSearch";
 
 type BookFormat = "epub" | "pdf" | "mobi"
 type BookCategory = "non-fiction" | "fiction"
 
-type SearchQuery = {
-    queryString: string,
-    allowedFormats: BookFormat[],
-    searchCategory: BookCategory
-}
-
-const search = async (title: string): Promise<Book[]> => {
-    console.log(`Searching for ${title}`)
-    let response = await fetch(`http://127.0.0.1:8080/libgen/${title}`, {
-        method: 'GET',
+const search = async (search: LibgenSearch): Promise<Book[]> => {
+    let response = await fetch(`http://127.0.0.1:8080/libgen/search`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(search)
     });
     response = await response.json()
 
@@ -30,16 +26,16 @@ const search = async (title: string): Promise<Book[]> => {
 type useSearchType = {
     searchResults: Book[],
     isSearching: boolean,
-    search: (search: SearchQuery) => void
+    search: (search: LibgenSearch) => void
 }
 
 function useSearch(): useSearchType {
     const [searchResults, setSearchResults] = useState<Book[]>([])
     const [isSearching, setIsSearching] = useState<boolean>(false)
 
-    const onSearch = (searchQuery: SearchQuery) => {
+    const onSearch = (searchQuery: LibgenSearch) => {
         setIsSearching(true)
-        search(searchQuery.queryString).then(books => {
+        search(searchQuery).then(books => {
             setSearchResults(books)
             setIsSearching(false)
         })
@@ -66,9 +62,15 @@ export const Main = () => {
     const onSubmitSearch = () => {
         console.log("[MAIN] Submitted search")
         search({
-            queryString,
-            allowedFormats: searchFormats.filter(format => format !== "all") as BookFormat[],
-            searchCategory
+            query: {
+                type: "title",
+                text: queryString,
+                category: searchCategory
+            },
+            filter: {
+                formats: searchFormats.filter(format => format !== "all") as BookFormat[],
+                languages: ["english"] 
+            } 
         })
     }
 

@@ -1,11 +1,12 @@
 
 export type LibgenSearch = {
     query: {
-        type: "TITLE" | "AUTHOR",
-        text: string
+        type: "title" | "author",
+        text: string,
+        category: "fiction" | "non-fiction"
     },
     filter: {
         languages: string[], 
-        formats: string[]
+        formats: string[],
     }
 }

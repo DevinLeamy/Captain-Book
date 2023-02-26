@@ -1,5 +1,6 @@
 package server.libgen
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.*
 
@@ -18,8 +19,11 @@ data class LibgenSearch(
  * Different categories of books.
  * E.g. fiction, non-fiction, mystery, biography, etc.
  */
+@Serializable
 enum class BookCategory {
+    @SerialName("fiction")
     FICTION,
+    @SerialName("non-fiction")
     NON_FICTION;
 
     override fun toString(): String {
@@ -31,8 +35,11 @@ enum class BookCategory {
 }
 
 
+@Serializable
 enum class QueryType {
+    @SerialName("title")
     TITLE,
+    @SerialName("author")
     AUTHOR;
 
     override fun toString(): String {

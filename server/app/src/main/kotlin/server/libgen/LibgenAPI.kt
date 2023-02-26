@@ -19,8 +19,8 @@ import kotlin.jvm.optionals.getOrNull
 
 data class Mirror(
     val hostUrl: String = "http://libgen.is/",
-    val fictionSearch: String = "https://libgen.is/search.php",
-    val nonFictionSearch: String = "https://libgen.is/fiction/",
+    val nonFictionSearch: String = "https://libgen.is/search.php",
+    val fictionSearch: String = "https://libgen.is/fiction/",
     val syncUrl: String = "http://libgen.is/json.php",
     /// Url with "{cover-url}" in place of a cover url.
     val coverUrlPattern: String = "http://libgen.is/covers/{cover-url}",
@@ -67,6 +67,7 @@ class LibgenAPI {
                 Optional.of(
                     QueryBuilder(mirror.fictionSearch)
                         .with("q", search.query.text)
+                        .with("language", "English")
                         .with("criteria", search.query.type.toString())
                         .build()
                 )
@@ -79,7 +80,10 @@ class LibgenAPI {
         val queryUrl = buildQueryUrl(search).getOrNull() ?: return listOf()
         return if (search.query.category == BookCategory.FICTION) {
             // Use the web scraper.
-            webScraper.scrapeSearchResults(queryUrl)
+            webScraper
+                .scrapeSearchResults(queryUrl)
+                .filter { search.filter.passes(it) }
+                .toList()
         } else {
             // Use the JSON api.
             val response: HttpResponse = client.request(queryUrl) {

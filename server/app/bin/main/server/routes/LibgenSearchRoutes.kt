@@ -27,6 +27,7 @@ fun Route.libgenRouting() {
                     status = HttpStatusCode.BadRequest
                 )
             }
+            println("Search: ${search}")
 
             println("Querying for books with title: ${search.query.text}")
 

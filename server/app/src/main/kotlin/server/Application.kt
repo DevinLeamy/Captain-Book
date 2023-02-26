@@ -20,21 +20,14 @@ class Store(
 val store = Store()
 
 fun main(args: Array<String>) {
-    val scraper = LibgenWebScraper()
-    runBlocking {
-        val books =scraper.scrapeSearchResults("https://libgen.is/fiction/?q=Fellowship+of+the+Ring&criteria=&language=&format=")
-
-        for (book in books) {
-            println(book)
-        }
-    }
-//    return io.ktor.server.netty.EngineMain.main(args)
+    return io.ktor.server.netty.EngineMain.main(args)
 }
 
 fun Application.module() {
     install(CORS) {
         // Very permissive CORS.
         anyHost()
+        allowHeader("Content-Type")
     }
     configureRouting()
     configureSerialization()
