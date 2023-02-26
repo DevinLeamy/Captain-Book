@@ -139,12 +139,17 @@ class LibgenWebScraper {
             when (fieldName) {
                 "Title:" -> book.title = Optional.of(fieldValue)
                 "Author(s):" -> {
-                    element.a {
-                        withAttribute = "title" to "search by author"
-                        findFirst {
-                            book.author = Optional.of(this.ownText)
+                    try {
+                        element.a {
+                            withAttribute = "title" to "search by author"
+                            findFirst {
+                                book.author = Optional.of(this.ownText)
+                            }
                         }
+                    } catch (e: Throwable) {
+                        // No listed author.
                     }
+
                 }
                 "Language:" -> book.language = Optional.of(fieldValue)
                 "Year:" -> book.year = Optional.of(fieldValue)
@@ -158,7 +163,6 @@ class LibgenWebScraper {
         // Check for the "required" fields.
         if (
             book.title.isEmpty ||
-            book.author.isEmpty ||
             book.language.isEmpty ||
             book.md5.isEmpty
         ) {
