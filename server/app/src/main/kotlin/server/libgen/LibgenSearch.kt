@@ -14,6 +14,23 @@ data class LibgenSearch(
     val filter: LibgenBookFilter,
 )
 
+/**
+ * Different categories of books.
+ * E.g. fiction, non-fiction, mystery, biography, etc.
+ */
+enum class BookCategory {
+    FICTION,
+    NON_FICTION;
+
+    override fun toString(): String {
+        return when (this) {
+            FICTION -> "fiction"
+            NON_FICTION -> "non-fiction"
+        }
+    }
+}
+
+
 enum class QueryType {
     TITLE,
     AUTHOR;
@@ -29,6 +46,7 @@ enum class QueryType {
 @Serializable
 data class LibgenQuery(
     val type: QueryType,
+    val category: BookCategory,
     val text: String
 )
 

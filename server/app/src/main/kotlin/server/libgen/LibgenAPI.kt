@@ -9,8 +9,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import server.QueryBuilder
@@ -21,7 +19,8 @@ import kotlin.jvm.optionals.getOrNull
 
 data class Mirror(
     val hostUrl: String = "http://libgen.is/",
-    val searchUrl: String = "https://libgen.is/search.php",
+    val fictionSearch: String = "https://libgen.is/search.php",
+    val nonFictionSearch: String = "https://libgen.is/fiction/",
     val syncUrl: String = "http://libgen.is/json.php",
     /// Url with "{cover-url}" in place of a cover url.
     val coverUrlPattern: String = "http://libgen.is/covers/{cover-url}",
@@ -39,7 +38,7 @@ private val downloadPatterns: List<String> = listOf(
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
-    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
+//    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
     private val REGEX_HREF = Regex("href=\"http.+\"")
 
     private val client = HttpClient(CIO) {
@@ -47,16 +46,39 @@ class LibgenAPI {
     }
     private val mirror = Mirror()
 
+    /**
+     * Basically, libgen has a json API for it's non-fiction books but it doesn't have one, or at least no one that's easily
+     * accessible, for it's non-fiction books.
+     */
+    private fun buildQueryUrl(search: LibgenSearch): Optional<String> {
+        return when (search.query.category) {
+            BookCategory.NON_FICTION -> {
+                Optional.of(
+                    QueryBuilder(mirror.nonFictionSearch)
+                        .with("req", search.query.text)
+                        .with("lg_topic", "libgen")
+                        .with("res", "25")
+                        .with("open", "0")
+                        .with("view", "simple")
+                        .with("phrase", "1")
+                        .with("column", search.query.type.toString())
+                        .build()
+                )
+            }
+            BookCategory.FICTION -> {
+                Optional.of(
+                    QueryBuilder(mirror.fictionSearch)
+                        .with("q", search.query.text)
+                        .with("criteria", search.query.type.toString())
+                        .build()
+                )
+            }
+            else -> Optional.empty()
+        }
+    }
+
     suspend fun search(search: LibgenSearch): List<LibgenBook> {
-        val queryUrl = QueryBuilder(mirror.searchUrl)
-            .with("req", search.query.text)
-            .with("lg_topic", "libgen")
-            .with("res", "25")
-            .with("open", "0")
-            .with("view", "simple")
-            .with("phrase", "1")
-            .with("column", search.query.type.toString())
-            .build()
+        val queryUrl = buildQueryUrl(search).getOrNull() ?: return listOf()
         val response: HttpResponse = client.request(queryUrl) {
             method = HttpMethod.Get
         }

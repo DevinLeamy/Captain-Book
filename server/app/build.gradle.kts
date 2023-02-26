@@ -38,6 +38,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     // Sendgrid
     implementation("com.sendgrid:sendgrid-java:4.9.3")
+    // Skrape{it}
+    implementation("it.skrape:skrapeit:1.2.2")
 }
 
 testing {
