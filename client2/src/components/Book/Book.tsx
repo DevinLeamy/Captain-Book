@@ -24,10 +24,30 @@ const download = async (book: Book): Promise<File | undefined> => {
     fileBlob.lastModifiedDate = new Date()
     fileBlob.name = book.title
     return fileBlob as File
+}
 
+/**
+ * Sends {book} to {kindleEmail}. 
+ * Returns whether the request succeeded.
+ */
+const sendToKindle = async (kindleEmail: string, book: Book): Promise<boolean> => {
+    const request = await fetch("http://localhost:8080/kindle/send", {
+        method: 'POST', 
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({
+            kindleEmail,
+            book
+        })
+    })
+
+    return request.ok
 }
 
 export const BookComponent = ({ book }: BookComponentProps) => {
+    const KINDLE_EMAIL = "devinleamy@gmail.com"
+    // const KINDLE_EMAIL = "the420kindle@kindle.com"
     const onDownload = async () => {
         let bookFile = await download(book)
         if (bookFile  === undefined) {
@@ -36,6 +56,16 @@ export const BookComponent = ({ book }: BookComponentProps) => {
 
         downloadLocally(bookFile, `${book.title}.${book.extension.toLowerCase()}`)
     }
+
+    const onSendToKindle = async () => {
+        let success = await sendToKindle(KINDLE_EMAIL, book)
+        if (success) {
+            console.log("Sent to kindle.")
+        } else {
+            console.log("Failed to send to the kindle.")
+        }
+    }
+
     return (
         <Grid key={book.md5} xs={3} item>
             <Card>
@@ -51,6 +81,7 @@ export const BookComponent = ({ book }: BookComponentProps) => {
                     <Button 
                         size="medium" 
                         variant="contained"
+                        onClick={onSendToKindle}
                     >Send to Kindle</Button>
                 </CardActions>
             </Card>
