@@ -22,3 +22,8 @@
 .book-display-container thead > td {
     font-weight: 400;
 }
+
+.loading-circle-container {
+    display: flex;
+    justify-content: center;
+}
