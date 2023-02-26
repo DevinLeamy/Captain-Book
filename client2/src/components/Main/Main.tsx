@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
-import { Book } from "../../Book"
+import { Book } from "../../types/Book"
 import { BookComponent } from "../Book/Book"
 import { BookDisplay } from "../BookDisplay/BookDisplay"
 

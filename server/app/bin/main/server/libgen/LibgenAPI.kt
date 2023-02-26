@@ -69,7 +69,6 @@ class LibgenAPI {
             .flatMap { it.get() }
             .filter { search.filter.passes(it)}
             .toList()
-
         return books
     }
 

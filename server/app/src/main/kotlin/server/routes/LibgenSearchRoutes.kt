@@ -2,6 +2,7 @@ package server.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import server.libgen.*
@@ -13,24 +14,21 @@ fun Route.libgenRouting() {
     route("/libgen") {
         /**
          * Fetch the metadata of all books results from the search query.
+         *
+         * TODO: Handle these errors globally as per: https://ktor.io/docs/status-pages.html#exceptions
          */
-        get("{title?}") {
-            val title = call.parameters["title"] ?: return@get call.respondText(
-                "Missing book title",
-                status = HttpStatusCode.BadRequest
-            )
-            val search = LibgenSearch(
-                LibgenQuery(
-                    type = QueryType.TITLE,
-                    text = title
-                ),
-                LibgenBookFilter(
-                    languages = listOf("english"),
-                    formats = listOf("epub", "mobi")
+        post("/search") {
+            val search: LibgenSearch
+            try {
+                search = call.receive()
+            } catch (error: Throwable) {
+                return@post call.respondText(
+                    "Failed to parse search parameters.",
+                    status = HttpStatusCode.BadRequest
                 )
-            )
+            }
 
-            println("Querying for books with title: $title")
+            println("Querying for books with title: ${search.query.text}")
 
             val books = libgen.search(search)
 

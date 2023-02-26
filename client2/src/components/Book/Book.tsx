@@ -1,6 +1,6 @@
 import { Card, Grid, CardActions, Button, CardContent } from "@mui/material"
 
-import { Book } from "../../Book"
+import { Book } from "../../types/Book"
 const image = require("../../assets/book.jpeg")
 import "./Book.css"
 
