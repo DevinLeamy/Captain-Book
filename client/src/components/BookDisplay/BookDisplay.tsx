@@ -2,6 +2,7 @@ import { ReactNode } from "react"
 import { Grid } from "@mui/material"
 
 import "./BookDisplay.css"
+import React from "react"
 
 type BookDisplayProps = {
     before: ReactNode,
