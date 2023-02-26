@@ -16,7 +16,6 @@
 .book-display-container td, th {
     box-sizing: default;
     border: 1px solid var(--grey) !important;
-    padding-left: 3px;
 }
 
 .book-display-container thead > td {

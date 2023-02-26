@@ -18,6 +18,7 @@ const BookDisplay = ({ before, children }: BookDisplayProps) => {
                         <tr className="book-display-thead">
                             <th>Title</th>
                             <th>Author</th>
+                            <th>Year</th>
                             <th>Format</th>
                             <th>Download</th>
                             <th>Send to Kindle</th>

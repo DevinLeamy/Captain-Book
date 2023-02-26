@@ -50,6 +50,7 @@ export const BookComponent = ({ book }: BookComponentProps) => {
         <tr className="book-row">
             <td>{book.title}</td>
             <td>{book.author}</td>
+            <td>{book.year}</td>
             <td>{book.extension.toUpperCase()}</td>
             {/* TODO: Extract these "waiting" buttons into a component */}
             <td>
