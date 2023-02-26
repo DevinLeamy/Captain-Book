@@ -17,6 +17,9 @@ data class LibgenBook(
     val extension: String,
     val md5: String,
     var coverurl: String,
+    // Note: This field is not part of the official libgen book model. It specifies
+    //       which database the books is from ("fiction" or "non-fiction")
+    var category: BookCategory = BookCategory.NON_FICTION
 )
 
 /**
@@ -36,4 +39,5 @@ data class LibgenIncompleteBook(
     var extension: Optional<String> = Optional.empty(),
     var md5: Optional<String> = Optional.empty(),
     var coverurl: Optional<String> = Optional.empty(),
+    var category: BookCategory = BookCategory.NON_FICTION
 )

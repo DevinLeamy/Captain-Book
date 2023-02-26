@@ -1,3 +1,7 @@
+type BookFormat = "epub" | "pdf" | "mobi"
+type BookCategory = "non-fiction" | "fiction"
+
+
 interface Book {
     id: string,
     title: string,
@@ -11,6 +15,7 @@ interface Book {
     extension: string,
     md5: string,
     coverurl: string,
+    category: BookCategory
 }
 
-export type { Book }
+export type { Book, BookFormat, BookCategory }

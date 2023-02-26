@@ -38,31 +38,36 @@ fun Route.libgenRouting() {
         }
 
         /**
-         * Fetch the book with the given md5 hash.
+         * Fetch a book file given the book data.
          */
-        get("/download/{md5?}") {
-            val md5 = call.parameters["md5"] ?: return@get call.respondText(
-                "Missing book md5",
-                status = HttpStatusCode.BadRequest
-            )
-
-            // Return book that has already been downloaded.
-            if (store.downloadedBooks.containsKey(md5)) {
-                call.respondFile(store.downloadedBooks[md5]!!)
-                return@get
+        post("/download") {
+            val book: LibgenBook
+            try {
+                book = call.receive()
+            } catch (error: Throwable) {
+                return@post call.respondText(
+                    "Failed to parse book.",
+                    status = HttpStatusCode.BadRequest
+                )
             }
 
-            println("Fetching book with md5: $md5")
+            // Return book that has already been downloaded.
+            if (store.downloadedBooks.containsKey(book.md5)) {
+                call.respondFile(store.downloadedBooks[book.md5]!!)
+                return@post
+            }
 
-            val bookDownload = libgen.downloadBookByMd5(md5)
+            println("Fetching book with md5: ${book.md5}")
+
+            val bookDownload = libgen.download(book)
             if (bookDownload.isEmpty) {
                 call.respondText(
                     "Failed to fetch book",
                     status = HttpStatusCode.InternalServerError
                 )
             } else {
-                store.downloadedBooks[md5] = bookDownload.get()
-                call.respondFile(store.downloadedBooks[md5]!!)
+                store.downloadedBooks[book.md5] = bookDownload.get()
+                call.respondFile(store.downloadedBooks[book.md5]!!)
             }
         }
     }

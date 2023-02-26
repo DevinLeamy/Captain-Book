@@ -27,18 +27,23 @@ data class Mirror(
     val downloadPattern: String = "http://library.lol/main/{md5}"
 )
 
-private val downloadPatterns: List<String> = listOf(
-    "http://library.lol/fiction/{md5}",
-    "http://library.lol/main/{md5}",
-    "https://libgen.me/book/{md5}",
-    "http://libgen.lc/get.php?md5={md5}",
-    "https://libgen.rocks/ads.php?md5={md5}",
+private val downloadPatterns: Map<BookCategory, List<String>> = mapOf(
+    // Fiction database.
+    BookCategory.FICTION to listOf(
+        "http://library.lol/fiction/{md5}",
+    ),
+    // Non-fiction database.
+    BookCategory.NON_FICTION to listOf(
+        "http://library.lol/main/{md5}",
+        "https://libgen.me/book/{md5}",
+        "http://libgen.lc/get.php?md5={md5}",
+        "https://libgen.rocks/ads.php?md5={md5}",
+    )
 )
 
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
-//    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
     private val REGEX_HREF = Regex("href=\"http.+\"")
     private val client = HttpClient(CIO) { install(HttpTimeout) }
     private val webScraper = LibgenWebScraper()
@@ -104,11 +109,10 @@ class LibgenAPI {
     /**
      * Fetch the book with the given md5.
      */
-    suspend fun downloadBookByMd5(md5: String): Optional<File> {
-        val downloadUrl = fetchDownloadUrl(md5).getOrNull() ?: return Optional.empty()
+    suspend fun download(book: LibgenBook): Optional<File> {
+        val downloadUrl = fetchDownloadUrl(book).getOrNull() ?: return Optional.empty()
         val tempFile = downloadFile(downloadUrl).getOrNull() ?: return Optional.empty()
-        val metadata = store.bookMetadata[md5]!!
-        val bookFile = File.createTempFile(metadata.title, ".${metadata.extension}")
+        val bookFile = File.createTempFile(book.title, ".${book.extension.lowercase()}")
         tempFile.renameTo(bookFile)
 
         return Optional.of(bookFile)
@@ -131,15 +135,14 @@ class LibgenAPI {
         val books = Json.decodeFromString<List<LibgenBook>>(jsonContent)
         books.forEach { book ->
             book.coverurl = mirror.coverUrlPattern.replace("{cover-url}", book.coverurl)
-            store.bookMetadata[book.md5] = book.copy()
         }
 
         return Optional.of(books)
     }
 
-    private suspend fun fetchDownloadUrl(md5: String): Optional<String> {
-        for (downloadPattern in downloadPatterns) {
-            val downloadPageUrl = downloadPattern.replace("{md5}", md5)
+    private suspend fun fetchDownloadUrl(book: LibgenBook): Optional<String> {
+        for (downloadPattern in downloadPatterns[book.category]!!) {
+            val downloadPageUrl = downloadPattern.replace("{md5}", book.md5)
             val response = client.request(downloadPageUrl) {
                 method = HttpMethod.Get
             }
@@ -177,7 +180,7 @@ class LibgenAPI {
                     file.appendBytes(packet.readBytes())
                 }
 
-                println("Read ${file.length() / 1000000}mb of ${response.contentLength()!! / 1000000}mb")
+                println("Read ${file.length() / 1000}Kb of ${response.contentLength()!! / 1000}Kb")
             }
         }
         if (failed) {

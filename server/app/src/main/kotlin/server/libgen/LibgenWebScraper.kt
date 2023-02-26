@@ -178,6 +178,7 @@ class LibgenWebScraper {
             extension = book.extension.getOrDefault(""),
             md5 = book.md5.getOrDefault(""),
             coverurl = book.coverurl.getOrDefault(""),
+            category = BookCategory.FICTION
         ))
     }
 }

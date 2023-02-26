@@ -2,15 +2,12 @@ import React, { useState } from "react"
 import TextField from '@mui/material/TextField';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
-import { Book } from "../../types/Book"
+import { Book, BookCategory, BookFormat } from "../../types/Book"
 import { BookComponent } from "../Book/Book"
 import { BookDisplay } from "../BookDisplay/BookDisplay"
 
 import "./Main.css"
 import { LibgenSearch } from "../../types/LibgenSearch";
-
-type BookFormat = "epub" | "pdf" | "mobi"
-type BookCategory = "non-fiction" | "fiction"
 
 const search = async (search: LibgenSearch): Promise<Book[]> => {
     let response = await fetch(`http://127.0.0.1:8080/libgen/search`, {
