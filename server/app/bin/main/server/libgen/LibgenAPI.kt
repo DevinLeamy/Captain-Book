@@ -40,10 +40,8 @@ class LibgenAPI {
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
 //    private val REGEX_LOL_DOWNLOAD = Regex("http://62\\.182\\.86\\.140/main/[0-9]+/\\w{32}/.+?(gz|pdf|rar|djvu|epub|chm)")
     private val REGEX_HREF = Regex("href=\"http.+\"")
-
-    private val client = HttpClient(CIO) {
-        install(HttpTimeout)
-    }
+    private val client = HttpClient(CIO) { install(HttpTimeout) }
+    private val webScraper = LibgenWebScraper()
     private val mirror = Mirror()
 
     /**
@@ -79,19 +77,24 @@ class LibgenAPI {
 
     suspend fun search(search: LibgenSearch): List<LibgenBook> {
         val queryUrl = buildQueryUrl(search).getOrNull() ?: return listOf()
-        val response: HttpResponse = client.request(queryUrl) {
-            method = HttpMethod.Get
-        }
-        val contents = response.bodyAsText()
-        val hashes = HASH_REGEX.findAll(contents).map { it.value }.toSet().toList()
+        return if (search.query.category == BookCategory.FICTION) {
+            // Use the web scraper.
+            webScraper.scrapeSearchResults(queryUrl)
+        } else {
+            // Use the JSON api.
+            val response: HttpResponse = client.request(queryUrl) {
+                method = HttpMethod.Get
+            }
+            val contents = response.bodyAsText()
+            val hashes = HASH_REGEX.findAll(contents).map { it.value }.toSet().toList()
 
-        val books: List<LibgenBook> = hashes
-            .map { hash -> parseBookHash(hash) }
-            .filter { it.isPresent }
-            .flatMap { it.get() }
-            .filter { search.filter.passes(it)}
-            .toList()
-        return books
+            hashes
+                .map { hash -> parseBookHash(hash) }
+                .filter { it.isPresent }
+                .flatMap { it.get() }
+                .filter { search.filter.passes(it)}
+                .toList()
+        }
     }
 
     /**

@@ -26,6 +26,10 @@ class LibgenWebScraper {
         return Optional.of(response.bodyAsText())
     }
 
+    /**
+     * Fetch the book data from a general search.
+     * E.g: https://libgen.is/fiction/?q=Fellowship+of+the+Ring&criteria=&language=&format=
+     */
     suspend fun scrapeSearchResults(searchUrl: String): List<LibgenBook> {
         val html = fetchHtml(searchUrl).getOrNull() ?: return emptyList()
         val rawRowContents: MutableList<List<DocElement>> = mutableListOf()
@@ -67,6 +71,7 @@ class LibgenWebScraper {
 
         val bookData = mutableListOf<LibgenBook>()
         for (link in bookDownloadLinks) {
+            /// TODO: Attempt to query other mirrors is libgen.is fails.
             val book = scapeBookPage("https://libgen.is${link}").getOrNull() ?: continue
             bookData.add(book)
         }
