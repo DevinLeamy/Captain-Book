@@ -3,3 +3,12 @@
     height: 100%;
     object-fit: cover;
 }
+
+.book-row td {
+    border: 1px solid black;
+}
+
+.book-field {
+    height: 40px;
+    line-height: 40px;
+}

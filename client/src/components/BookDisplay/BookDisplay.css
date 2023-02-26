@@ -1,3 +1,23 @@
 .book-display-container {
     margin-top: 20px;
+    width: 100%;
 }
+
+.book-display-table {
+    width: 100%;
+}
+
+
+.book-display-container table {
+    border-collapse: collapse;
+}
+
+
+td, th {
+    box-sizing: default;
+    border: 1px solid black !important;
+}
+
+/* .book-display-thead > td {
+    border-left: 1px solid black;
+} */

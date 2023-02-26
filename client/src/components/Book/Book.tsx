@@ -1,6 +1,8 @@
-import { Card, Grid, CardActions, Button, CardContent } from "@mui/material";
+import { Button } from "@mui/material";
 import { default as downloadLocally } from "downloadjs";
 import React from "react";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import SendIcon from "@mui/icons-material/Send";
 
 import { Book } from "../../types/Book";
 const image = require("../../assets/book.jpeg");
@@ -33,20 +35,20 @@ export const BookComponent = ({ book }: BookComponentProps) => {
     };
 
     return (
-        <Grid style={{ width: "200px" }} key={book.md5} xs={3} item>
-            <Card>
-                <div>{book.title}</div>
-                <img className="book-cover-image" src={image} />
-                <div>{book.author}</div>
-                <CardActions>
-                    <Button size="medium" variant="contained" onClick={onDownload}>
-                        Download
-                    </Button>
-                    <Button size="medium" variant="contained" onClick={onSendToKindle}>
-                        Send to Kindle
-                    </Button>
-                </CardActions>
-            </Card>
-        </Grid>
+        <tr className="book-row">
+            <td>{book.title}</td>
+            <td>{book.author}</td>
+            <td>{book.extension}</td>
+            <td>
+                <Button size="medium" fullWidth variant="contained" onClick={onDownload}>
+                    <CloudDownloadIcon />
+                </Button>
+            </td>
+            <td>
+                <Button size="medium" fullWidth variant="contained" onClick={onSendToKindle}>
+                    <SendIcon />
+                </Button>
+            </td>
+        </tr>
     );
 };
