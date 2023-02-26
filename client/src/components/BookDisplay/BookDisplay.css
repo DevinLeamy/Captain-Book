@@ -13,11 +13,12 @@
 }
 
 
-td, th {
+.book-display-container td, th {
     box-sizing: default;
-    border: 1px solid black !important;
+    border: 1px solid var(--grey) !important;
+    padding-left: 3px;
 }
 
-/* .book-display-thead > td {
-    border-left: 1px solid black;
-} */
+.book-display-container thead > td {
+    font-weight: 400;
+}

@@ -38,7 +38,7 @@ export const BookComponent = ({ book }: BookComponentProps) => {
         <tr className="book-row">
             <td>{book.title}</td>
             <td>{book.author}</td>
-            <td>{book.extension}</td>
+            <td>{book.extension.toUpperCase()}</td>
             <td>
                 <Button size="medium" fullWidth variant="contained" onClick={onDownload}>
                     <CloudDownloadIcon />

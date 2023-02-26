@@ -13,13 +13,14 @@ html {
 body {
   font-family: 'Montserrat', sans-serif;
   --orange: #FFA500;
-  --white: rgb(245, 245, 245);
+  --white: rgb(207, 207, 207);
   --blue: rgb(85, 169, 254);
   --navbar-height: 30px;
-  --black: rgb(21, 21, 21);
+  --black: rgb(18, 18, 18);
+  --grey: #424242;
 
-  /* background-color: var(--black);
-  color: var(--white); */
+  background-color: var(--black);
+  color: var(--white);
 
   overflow-y: scroll;
 }
