@@ -1,7 +1,7 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React from "react";
+import { Link } from "react-router-dom";
 
-import "./Navbar.css"
+import "./Navbar.css";
 
 const Navbar = () => {
     return (
@@ -9,7 +9,7 @@ const Navbar = () => {
             <h3>Nouvelle</h3>
             {/* <Link to="/">Home</Link> */}
         </div>
-    )
-}
+    );
+};
 
-export { Navbar }
+export { Navbar };
