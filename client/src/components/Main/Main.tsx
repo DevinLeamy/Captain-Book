@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
@@ -11,8 +11,8 @@ import { useSearch } from "../../hooks/useSearch";
 
 export const Main = () => {
     const [queryString, setQueryString] = useState<string>("");
-    const { searchResults, search, isSearching } = useSearch();
-    const [searchFormats, setSearchFormats] = useState<string[]>(["all"]);
+    const { searchResults, search, searchStatus } = useSearch();
+    const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"]);
     const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction");
 
     const onSubmitSearch = () => {
@@ -41,6 +41,22 @@ export const Main = () => {
         setSearchCategory(newCategory);
     };
 
+    const loadingDisplay = (): ReactNode => {
+        if (searchStatus === "waiting") {
+            return <h2>Loading...</h2>;
+        }
+        return null;
+    };
+
+    const loadedDisplay = (): ReactNode => {
+        if (searchStatus === "finished" && searchResults.length === 0) {
+            return <h2>No results founds.</h2>;
+        } else if (searchStatus === "failed") {
+            return <h2>Search failed.</h2>;
+        }
+        return null;
+    };
+
     return (
         <div className="main-c-container">
             <TextField
@@ -58,9 +74,6 @@ export const Main = () => {
             />
             <div className="search-options-container">
                 <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
-                    <ToggleButton size="small" value="all">
-                        All
-                    </ToggleButton>
                     <ToggleButton size="small" value="epub">
                         EPUB
                     </ToggleButton>
@@ -85,7 +98,7 @@ export const Main = () => {
                     </ToggleButton>
                 </ToggleButtonGroup>
             </div>
-            <BookDisplay before={isSearching ? <h1>Loading...</h1> : null}>
+            <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
                 {searchResults.map((book) => (
                     <BookComponent key={book.md5} book={book} />
                 ))}

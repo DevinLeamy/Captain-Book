@@ -4,25 +4,26 @@ import { NouvelleAPI } from "../api/api";
 import { Book } from "../types/Book";
 import { LibgenSearch } from "../types/LibgenSearch";
 
+type SearchStatus = "idle" | "finished" | "waiting" | "failed";
 type useSearchType = {
     searchResults: Book[];
-    isSearching: boolean;
+    searchStatus: SearchStatus;
     search: (search: LibgenSearch) => void;
 };
 
 function useSearch(): useSearchType {
     const [searchResults, setSearchResults] = useState<Book[]>([]);
-    const [isSearching, setIsSearching] = useState<boolean>(false);
+    const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle");
 
     const onSearch = (searchQuery: LibgenSearch) => {
-        setIsSearching(true);
+        setSearchStatus("waiting");
         NouvelleAPI.search(searchQuery)
             .then((books) => {
                 setSearchResults(books);
-                setIsSearching(false);
+                setSearchStatus("finished");
             })
             .catch((error) => {
-                setIsSearching(false);
+                setSearchStatus("failed");
                 setSearchResults([]);
                 console.log("[MAIN] Failed to search");
             });
@@ -30,7 +31,7 @@ function useSearch(): useSearchType {
     return {
         searchResults,
         search: onSearch,
-        isSearching,
+        searchStatus,
     };
 }
 
