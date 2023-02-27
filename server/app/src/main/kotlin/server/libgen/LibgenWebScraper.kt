@@ -74,10 +74,16 @@ class LibgenWebScraper {
 
 
         val bookData = coroutineScope {
+            /**
+             * Collect the deferred optional book objects.
+             */
             val bookDataDeferred = bookDownloadLinks.map {
                 async { scapeBookPage("https://libgen.is${it}") }
             }.toList()
 
+            /**
+             * Collect the books out of the deferred books.
+             */
             val bookData = mutableListOf<LibgenBook>()
             for (bookDeferred in bookDataDeferred) {
                 /// TODO: Attempt to query other mirrors is libgen.is fails.

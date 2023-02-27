@@ -9,6 +9,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import server.QueryBuilder
@@ -60,7 +62,7 @@ class LibgenAPI {
                     QueryBuilder(mirror.nonFictionSearch)
                         .with("req", search.query.text)
                         .with("lg_topic", "libgen")
-                        .with("res", "25")
+                        .with("res", "50")
                         .with("open", "0")
                         .with("view", "simple")
                         .with("phrase", "1")
@@ -97,12 +99,26 @@ class LibgenAPI {
             val contents = response.bodyAsText()
             val hashes = HASH_REGEX.findAll(contents).map { it.value }.toSet().toList()
 
-            hashes
-                .map { hash -> parseBookHash(hash) }
-                .filter { it.isPresent }
-                .flatMap { it.get() }
-                .filter { search.filter.passes(it)}
-                .toList()
+            // TODO: Requires testing - might not be a good idea, because of IP bans.
+
+            coroutineScope {
+                /**
+                 * Collect the deferred optional book objects.
+                 */
+                val booksDeferred = hashes
+                    .map { hash -> async { parseBookHash(hash) } }
+                    .toList()
+
+                /**
+                 * Collect the books out of the deferred books.
+                 */
+                booksDeferred
+                    .map  { it.await() }
+                    .filter { it.isPresent }
+                    .flatMap { it.get() }
+                    .filter { search.filter.passes(it)}
+                    .toList()
+            }
         }
     }
 
