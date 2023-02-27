@@ -9,6 +9,9 @@ import io.ktor.http.*
 import it.skrape.core.htmlDocument
 import it.skrape.selects.DocElement
 import it.skrape.selects.html5.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull
@@ -69,12 +72,21 @@ class LibgenWebScraper {
             }
         }
 
-        val bookData = mutableListOf<LibgenBook>()
-        for (link in bookDownloadLinks) {
-            /// TODO: Attempt to query other mirrors is libgen.is fails.
-            val book = scapeBookPage("https://libgen.is${link}").getOrNull() ?: continue
-            bookData.add(book)
+
+        val bookData = coroutineScope {
+            val bookDataDeferred = bookDownloadLinks.map {
+                async { scapeBookPage("https://libgen.is${it}") }
+            }.toList()
+
+            val bookData = mutableListOf<LibgenBook>()
+            for (bookDeferred in bookDataDeferred) {
+                /// TODO: Attempt to query other mirrors is libgen.is fails.
+                val book = bookDeferred.await().getOrNull() ?: continue
+                bookData.add(book)
+            }
+            bookData
         }
+
         return bookData.toList()
     }
 
