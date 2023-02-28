@@ -1,0 +1,9 @@
+package server
+
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+
+suspend fun <T, R> sendAsyncRequests(requests: List<T>, map: suspend (T) -> R): List<R> = coroutineScope {
+    val deferred = requests.map { async { map(it) } }.toList()
+    return@coroutineScope deferred.map { it.await() }.toList()
+}

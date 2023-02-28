@@ -14,6 +14,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import server.QueryBuilder
+import server.sendAsyncRequests
 import server.store
 import java.io.File
 import java.util.*
@@ -99,26 +100,18 @@ class LibgenAPI {
             val contents = response.bodyAsText()
             val hashes = HASH_REGEX.findAll(contents).map { it.value }.toSet().toList()
 
-            // TODO: Requires testing - might not be a good idea, because of IP bans.
 
-            coroutineScope {
-                /**
-                 * Collect the deferred optional book objects.
-                 */
-                val booksDeferred = hashes
-                    .map { hash -> async { parseBookHash(hash) } }
-                    .toList()
-
-                /**
-                 * Collect the books out of the deferred books.
-                 */
-                booksDeferred
-                    .map  { it.await() }
-                    .filter { it.isPresent }
-                    .flatMap { it.get() }
-                    .filter { search.filter.passes(it)}
-                    .toList()
+            val rawBookResults = if (false) {
+                // Async (WILL RESULT IN TEMPORARY IP BAN)
+                sendAsyncRequests(hashes) { parseBookHash(it) }
+            } else {
+                // Sync (safe)
+                hashes.map  { parseBookHash(it) }
             }
+           rawBookResults
+                .filter { it.isPresent }
+                .flatMap { it.get() }
+                .filter { search.filter.passes(it) }
         }
     }
 

@@ -12,6 +12,7 @@ import it.skrape.selects.html5.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import server.sendAsyncRequests
 import java.util.*
 import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull
@@ -72,28 +73,18 @@ class LibgenWebScraper {
             }
         }
 
-
-        val bookData = coroutineScope {
-            /**
-             * Collect the deferred optional book objects.
-             */
-            val bookDataDeferred = bookDownloadLinks.map {
-                async { scapeBookPage("https://libgen.is${it}") }
-            }.toList()
-
-            /**
-             * Collect the books out of the deferred books.
-             */
-            val bookData = mutableListOf<LibgenBook>()
-            for (bookDeferred in bookDataDeferred) {
-                /// TODO: Attempt to query other mirrors is libgen.is fails.
-                val book = bookDeferred.await().getOrNull() ?: continue
-                bookData.add(book)
-            }
-            bookData
+        return if (false) {
+            // Async (WILL RESULT IN TEMPORARY IP BAN)
+            sendAsyncRequests(bookDownloadLinks) { scapeBookPage("https://libgen.is${it}") }
+                .filter { it.isPresent }
+                .map { it.get() }
+        } else {
+           // Sync (safe)
+           bookDownloadLinks
+               .map { scapeBookPage("https://libgen.is${it}") }
+               .filter { it.isPresent }
+               .map { it.get() }
         }
-
-        return bookData.toList()
     }
 
     /**
