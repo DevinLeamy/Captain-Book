@@ -25,21 +25,31 @@ dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
     // Ktor
-    implementation("io.ktor:ktor-server-core-jvm:2.2.3")
-    implementation("io.ktor:ktor-server-netty-jvm:2.2.3")
-     implementation("io.ktor:ktor-server-content-negotiation:2.2.3")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.3")
-    implementation("io.ktor:ktor-server-status-pages-jvm:2.2.3")
-    implementation("io.ktor:ktor-server-default-headers-jvm:2.2.3")
-    implementation("io.ktor:ktor-client-core:2.2.3")
-    implementation("io.ktor:ktor-client-cio:2.2.3")
-    implementation("io.ktor:ktor-server-cors:2.2.3")
+    val ktorVersion = "2.2.3"
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-default-headers-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
     // Logback
     implementation("ch.qos.logback:logback-classic:1.4.5")
     // Sendgrid
     implementation("com.sendgrid:sendgrid-java:4.9.3")
     // Skrape{it}
     implementation("it.skrape:skrapeit:1.2.2")
+    // Exposed
+    val exposedVersion = "0.40.1"
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    // HikariCP
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    // PostgreSQL
+    implementation("org.postgresql:postgresql:42.2.27")
 }
 
 testing {
