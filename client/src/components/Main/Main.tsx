@@ -5,17 +5,17 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Book, BookCategory, BookFormat } from "../../types/Book";
 import { BookComponent } from "../Book/Book";
 import { BookDisplay } from "../BookDisplay/BookDisplay";
+import { SearchBar } from "../SearchBar/SearchBar";
 
 import "./Main.css";
 import { useSearch } from "../../hooks/useSearch";
 
 export const Main = () => {
-    const [queryString, setQueryString] = useState<string>("");
     const { searchResults, search, searchStatus } = useSearch();
     const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"]);
     const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction");
 
-    const onSubmitSearch = () => {
+    const onSubmitSearch = (queryString: string) => {
         console.log("[MAIN] Submitted search");
         search({
             query: {
@@ -59,19 +59,7 @@ export const Main = () => {
 
     return (
         <div className="main-c-container">
-            <TextField
-                fullWidth
-                id="search-input"
-                size="medium"
-                label="Search"
-                variant="outlined"
-                onChange={(e) => setQueryString(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        onSubmitSearch();
-                    }
-                }}
-            />
+            <SearchBar onSubmit={onSubmitSearch} />
             <div className="search-options-container">
                 <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
                     <ToggleButton size="small" value="epub">

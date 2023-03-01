@@ -1,6 +1,33 @@
 .navbar-container {
     width: 100%;
+    --navbar-height: 40px;
+    --navbar-left-width: 200px;
     height: var(--navbar-height);
     line-height: var(--navbar-height);
     border-bottom: 1px solid var(--white);
+    display: flex;
+    flex-direction: row;
+}
+
+.navbar-left {
+    justify-content: flex-start;
+    font-size: 20px;
+    font-weight: bold;
+    width: var(--navbar-left-width);
+}
+
+.navbar-right {
+    display: flex;
+    justify-content: flex-end;
+    width: calc(100% - var(--navbar-left-width));
+    justify-content: flex-end;
+    height: var(--navbar-height);
+    gap: 20px;
+}
+
+.navbar-link {
+    line-height: var(--navbar-height);
+    height: var(--navbar-height);
+    color: rgb(255, 255, 255);
+    font-size: 18px;
 }

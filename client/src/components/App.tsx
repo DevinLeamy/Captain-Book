@@ -7,6 +7,7 @@ import { Main } from "./Main/Main";
 
 import "./App.css";
 import { Navbar } from "./navbar/Navbar";
+import { LibraryComponent } from "./Library/Library";
 
 const darkTheme = createTheme({
     palette: {
@@ -24,6 +25,8 @@ const App = () => {
                     <div className="page-container">
                         <Routes>
                             <Route path="/" element={<Main />} />
+                            <Route path="/search" element={<Main />} />
+                            <Route path="/library" element={<LibraryComponent />} />
                         </Routes>
                     </div>
                 </div>
