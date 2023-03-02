@@ -7,9 +7,9 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import server.db.models.Books
-import server.db.models.LibgenBooks
-import server.db.models.Users
+import server.db.models.BooksTable
+import server.db.models.LibgenBooksTable
+import server.db.models.UsersTable
 
 object DatabaseFactory {
     // TODO: Add these values to app config.
@@ -24,9 +24,9 @@ object DatabaseFactory {
             /**
              * Create tables if they don't exist.
              */
-            SchemaUtils.create(Users)
-            SchemaUtils.create(LibgenBooks)
-            SchemaUtils.create(Books)
+            SchemaUtils.create(UsersTable)
+            SchemaUtils.create(LibgenBooksTable)
+            SchemaUtils.create(BooksTable)
         }
     }
 
