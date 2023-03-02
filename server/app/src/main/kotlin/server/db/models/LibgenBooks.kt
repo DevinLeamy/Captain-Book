@@ -1,8 +1,8 @@
 package server.db.models
 
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -65,7 +65,7 @@ class LibgenBooks {
         insertBookStatement.resultedValues?.let {
             return@dbQuery Result.success(it[0][LibgenBooksTable.id].value)
         }
-        return@dbQuery Result.failure(Exception("Failed to insert book"))
+        return@dbQuery Result.failure(Exception("Failed to insert libgen book"))
     }
 
     /**

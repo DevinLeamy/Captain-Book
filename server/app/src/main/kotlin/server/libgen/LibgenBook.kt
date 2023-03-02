@@ -5,6 +5,7 @@ import java.util.*
 
 @Serializable
 data class LibgenBook(
+    // NOTE: This Id is different from the one used to index books in the database.
     val id: String,
     val title: String,
     val author: String,
@@ -19,7 +20,7 @@ data class LibgenBook(
     var coverurl: String,
     // Note: This field is not part of the official libgen book model. It specifies
     //       which database the books is from ("fiction" or "non-fiction")
-    var category: BookCategory = BookCategory.NON_FICTION
+    val category: BookCategory = BookCategory.NON_FICTION
 )
 
 /**
