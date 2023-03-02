@@ -1,8 +1,9 @@
 package server.db.models
 
 import org.jetbrains.exposed.dao.id.IntIdTable
+import server.libgen.LibgenBook
 
-data class Book(val id: Int, val file: Int, val ownerId: Int, val libgenBookId: Int) {
+data class Book(val id: Int, val file: Int, val libgenBook: LibgenBook) {
 
 }
 

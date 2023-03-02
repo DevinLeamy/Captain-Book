@@ -26,6 +26,8 @@ object LibgenBooksTable: IntIdTable() {
     val md5 = char("md5", 32)
     var coverurl = varchar("coverurl", 200)
     // NOT INCLUDED IN THE LIBGEN BOOK MODEL
+    // TODO: Use an enum type of some kind.
+    // https://github.com/JetBrains/Exposed/wiki/DataTypes
     var category = varchar("category", 100)
 }
 
@@ -35,7 +37,7 @@ class LibgenBooks {
     /**
      * Fetch a book by id.
      */
-    suspend fun book(id: Int): LibgenBook? = dbQuery {
+    suspend fun bookWithId(id: Int): LibgenBook? = dbQuery {
         LibgenBooksTable
             .select { LibgenBooksTable.id eq id }
             .map(::resultRowToLibgenBook).singleOrNull()
