@@ -9,10 +9,7 @@ import io.ktor.http.*
 import it.skrape.core.htmlDocument
 import it.skrape.selects.DocElement
 import it.skrape.selects.html5.*
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
-import server.sendAsyncRequests
+import server.utils.sendAsyncRequests
 import java.util.*
 import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull

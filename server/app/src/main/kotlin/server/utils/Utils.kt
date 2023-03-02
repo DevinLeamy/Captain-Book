@@ -1,4 +1,4 @@
-package server
+package server.utils
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

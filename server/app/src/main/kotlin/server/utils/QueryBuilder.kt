@@ -1,4 +1,4 @@
-package server
+package server.utils
 
 class QueryBuilder(private var baseUrl: String) {
     private var isFirstParameter: Boolean = true
