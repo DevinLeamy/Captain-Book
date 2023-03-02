@@ -41,12 +41,12 @@ class Books {
     /**
      * Create a book
      */
-    suspend fun createBook(file: Int, userId: Int, libgenBookId: Int, sendToKindle: Boolean): Result<Int> = dbQuery {
+    suspend fun addBook(file: Int, userId: Int, libgenBookId: Int, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {
             it[BooksTable.file] = file
             it[BooksTable.userId] = userId
             it[BooksTable.libgenBookId] = libgenBookId
-            it[BooksTable.sentToKindle] = sendToKindle
+            it[BooksTable.sentToKindle] = sentToKindle
         }
         insertBookStatement.resultedValues?.let {
             return@dbQuery Result.success(it[0][LibgenBooksTable.id].value)
