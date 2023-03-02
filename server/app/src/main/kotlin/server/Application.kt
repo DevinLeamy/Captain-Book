@@ -3,6 +3,7 @@ package server
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 import kotlinx.coroutines.runBlocking
+import server.db.DatabaseFactory
 import server.libgen.LibgenBook
 import server.libgen.LibgenWebScraper
 import server.plugins.configureRouting
@@ -24,6 +25,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    DatabaseFactory.init()
     install(CORS) {
         // Very permissive CORS.
         anyHost()
