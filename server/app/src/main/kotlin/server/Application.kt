@@ -34,6 +34,12 @@ fun Application.module() {
     FirebaseAdmin.init()
     // Initialize database.
     DatabaseFactory.init()
+    // Very permissive CORS.
+    install(CORS) {
+        anyHost()
+        allowHeader("Content-Type")
+        allowHeader("Authorization")
+    }
     install(Authentication) {
         firebase {
             validate {token: FirebaseToken ->
@@ -45,11 +51,7 @@ fun Application.module() {
             }
         }
     }
-    // Very permissive CORS.
-    install(CORS) {
-        anyHost()
-        allowHeader("Content-Type")
-    }
+
     // Create routes.
     configureRouting()
     configureSerialization()

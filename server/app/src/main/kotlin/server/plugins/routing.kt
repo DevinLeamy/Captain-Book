@@ -25,7 +25,9 @@ fun Route.testAuthentication() {
         route("/private") {
             get("/test") {
                 val principal = call.principal<UserPrincipal>()
+                println("[ROUTING] Authenticated")
                 call.respondText("Hello, ${principal?.token}")
+
             }
         }
 

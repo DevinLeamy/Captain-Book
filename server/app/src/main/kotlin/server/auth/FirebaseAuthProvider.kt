@@ -4,12 +4,10 @@ import com.google.firebase.auth.*
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.config.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import server.db.models.User
-import server.db.models.users
 
 /**
  * Contains the information of the authenticated user.
@@ -55,6 +53,7 @@ class FirebaseAuthProvider(config: FirebaseConfig): AuthenticationProvider(confi
     }
     override suspend fun onAuthenticate(context: AuthenticationContext) {
         val token = fetchAuthHeaderOrNull(context.call)
+        println("TOKEN: $token")
 
         if (token == null) {
             handleUnauthenticated(context)
