@@ -1,11 +1,12 @@
 import React from "react"
 import { Link } from "react-router-dom"
+
 import { useAuth } from "../../hooks/useAuth"
 
 import "./Navbar.css"
 
 const Navbar = () => {
-    const { authenticated } = useAuth()
+    const { authenticated, onLogin } = useAuth()
     return (
         <div className="navbar-container">
             <div className="navbar-left">Nouvelle</div>
@@ -16,7 +17,11 @@ const Navbar = () => {
                 <Link className="navbar-link" to={"./library"}>
                     Library
                 </Link>
-                {!authenticated && <div className="navbar-link">Login</div>}
+                {!authenticated && (
+                    <div className="navbar-link login-button" onClick={onLogin}>
+                        Login
+                    </div>
+                )}
             </div>
         </div>
     )

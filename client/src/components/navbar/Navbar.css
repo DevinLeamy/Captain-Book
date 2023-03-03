@@ -29,5 +29,9 @@
     line-height: var(--navbar-height);
     height: var(--navbar-height);
     color: rgb(255, 255, 255);
-    font-size: 18px;
+    font-size: 15px;
+}
+
+.login-button:hover {
+    cursor: pointer;
 }
