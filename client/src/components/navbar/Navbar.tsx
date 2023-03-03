@@ -1,9 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from "react"
+import { Link } from "react-router-dom"
+import { useAuth } from "../../hooks/useAuth"
 
-import "./Navbar.css";
+import "./Navbar.css"
 
 const Navbar = () => {
+    const { authenticated } = useAuth()
     return (
         <div className="navbar-container">
             <div className="navbar-left">Nouvelle</div>
@@ -14,9 +16,10 @@ const Navbar = () => {
                 <Link className="navbar-link" to={"./library"}>
                     Library
                 </Link>
+                {!authenticated && <div className="navbar-link">Login</div>}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export { Navbar };
+export { Navbar }

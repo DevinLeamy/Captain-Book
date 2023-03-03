@@ -1,38 +1,40 @@
-import React from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles"
+import CssBaseline from "@mui/material/CssBaseline"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-import { Main } from "./Main/Main";
+import { Main } from "./Main/Main"
+import { Navbar } from "./navbar/Navbar"
+import { LibraryComponent } from "./Library/Library"
+import { AuthContextProvider } from "../auth/AuthContext"
 
-import "./App.css";
-import { Navbar } from "./navbar/Navbar";
-import { LibraryComponent } from "./Library/Library";
+import "./App.css"
 
 const darkTheme = createTheme({
     palette: {
         mode: "dark",
     },
-});
+})
 
 const App = () => {
     return (
         <Router>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <div className="main-container">
-                    <Navbar />
-                    <div className="page-container">
-                        <Routes>
-                            <Route path="/" element={<Main />} />
-                            <Route path="/search" element={<Main />} />
-                            <Route path="/library" element={<LibraryComponent />} />
-                        </Routes>
+            <AuthContextProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+                    <div className="main-container">
+                        <Navbar />
+                        <div className="page-container">
+                            <Routes>
+                                <Route path="/" element={<Main />} />
+                                <Route path="/search" element={<Main />} />
+                                <Route path="/library" element={<LibraryComponent />} />
+                            </Routes>
+                        </div>
                     </div>
-                </div>
-            </ThemeProvider>
+                </ThemeProvider>
+            </AuthContextProvider>
         </Router>
-    );
-};
+    )
+}
 
-export default App;
+export default App
