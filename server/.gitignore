@@ -4,3 +4,5 @@
 # Ignore Gradle build output directory
 build
 .env
+
+app/src/main/resources/ktor-firebase-auth-adminsdk.json

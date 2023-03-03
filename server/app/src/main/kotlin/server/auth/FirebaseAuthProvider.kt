@@ -4,15 +4,17 @@ import com.google.firebase.auth.*
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.config.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import server.db.models.User
+import server.db.models.users
 
 /**
  * Contains the information of the authenticated user.
  */
-data class UserPrincipal(var token: String, val user: User?): Principal
+data class UserPrincipal(val token: String, val user: User?): Principal
 
 const val FIREBASE_AUTH = "firebase"
 const val FirebaseJWTAuthKey: String = "FirebaseAuth"
