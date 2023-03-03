@@ -27,7 +27,14 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<Main />} />
                                 <Route path="/search" element={<Main />} />
-                                <Route path="/library" element={<LibraryComponent />} />
+                                <Route
+                                    path="/library"
+                                    element={
+                                        <LibraryComponent
+                                            unauthenticated={<h3>Login to access your library.</h3>}
+                                        />
+                                    }
+                                />
                             </Routes>
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import { auth } from "../firebase/firebase"
 type AuthContextT = {
     authenticated: boolean
     user: User | undefined
+    token: string | undefined
     onLogin: () => void
 }
 
@@ -25,14 +26,12 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const onLogin = () => {
         // TODO: Login with Google.
         signInWithPopup(auth, authProvider)
-            .then((result) => {
-                const credential = GoogleAuthProvider.credentialFromResult(result)
-                const token = credential?.accessToken
+            .then(async (result) => {
                 const user = result.user
-
-                if (token !== undefined && user !== undefined) {
-                    setAccessToken(token)
+                const token = await fetchAccessToken(user)
+                if (user !== undefined && token !== undefined) {
                     setUser(user)
+                    setAccessToken(token)
                 } else {
                     throw Error("Unknown error")
                 }
@@ -42,6 +41,14 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             })
     }
 
+    /**
+     * Fetch the JWT verification access token, that can be used for authorization on
+     * the backend.
+     */
+    const fetchAccessToken = async (user: User): Promise<string> => {
+        return await user.getIdToken(true)
+    }
+
     return (
         // TODO: Implement useMemo() hook?
         <AuthContext.Provider
@@ -49,6 +56,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
                 authenticated: user !== undefined,
                 user,
                 onLogin,
+                token: accessToken,
             }}
         >
             {children}
