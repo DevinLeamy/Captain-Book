@@ -2,6 +2,7 @@ package server.db.models
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import server.db.DatabaseFactory.dbQuery
@@ -27,6 +28,20 @@ class Users {
             // TODO: Fetch the user's books.
             books = listOf() // Books().allBooksForUser(row[UsersTable.id].value)
         )
+    }
+
+    /**
+     * Create a new user account.
+     */
+    suspend fun addUser(email: String, kindleEmail: String?): User? {
+        dbQuery {
+            UsersTable.insert {
+                it[UsersTable.email] = email
+                it[UsersTable.kindleEmail] = kindleEmail
+            }
+        }
+        // Fetch the newly created user.
+        return userWithEmail(email)
     }
 
     /**

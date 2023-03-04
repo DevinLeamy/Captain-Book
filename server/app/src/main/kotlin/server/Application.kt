@@ -43,10 +43,12 @@ fun Application.module() {
     install(Authentication) {
         firebase {
             validate {token: FirebaseToken ->
-                val user = users.userWithEmail(token.email)
+                val user = users.userWithEmail(token.email) ?: users.addUser(token.email, kindleEmail = null)
                 if (user == null) {
-                    // TODO: Create a new user.
+                    println("[APPLICATION] Failed to create new user.")
+                    return@validate null
                 }
+                println("[APPLICATION] Created new user: ${user.email}")
                 UserPrincipal(token.uid, user)
             }
         }

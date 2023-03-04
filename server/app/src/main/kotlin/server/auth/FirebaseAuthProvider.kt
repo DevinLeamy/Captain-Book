@@ -12,7 +12,7 @@ import server.db.models.User
 /**
  * Contains the information of the authenticated user.
  */
-data class UserPrincipal(val token: String, val user: User?): Principal
+data class UserPrincipal(val token: String, val user: User): Principal
 
 const val FIREBASE_AUTH = "firebase"
 const val FirebaseJWTAuthKey: String = "FirebaseAuth"
