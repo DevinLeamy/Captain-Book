@@ -1,8 +1,9 @@
-import { createContext, useState, ReactNode } from "react"
+import { createContext, ReactNode } from "react"
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 
 import { User } from "../types/User"
 import { auth } from "../firebase/firebase"
+import { usePersistentState } from "../hooks/usePersistentState"
 
 type AuthContextT = {
     authenticated: boolean
@@ -20,11 +21,10 @@ interface AuthContextProviderProps {
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     children,
 }: AuthContextProviderProps) => {
-    const [accessToken, setAccessToken] = useState<string | undefined>(undefined)
-    const [user, setUser] = useState<User | undefined>(undefined)
+    const [accessToken, setAccessToken] = usePersistentState<string | undefined>("token", undefined)
+    const [user, setUser] = usePersistentState<User | undefined>("user", undefined)
 
     const onLogin = () => {
-        // TODO: Login with Google.
         signInWithPopup(auth, authProvider)
             .then(async (result) => {
                 const user = result.user

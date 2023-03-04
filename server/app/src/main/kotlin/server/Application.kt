@@ -1,6 +1,5 @@
 package server
 
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseToken
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
