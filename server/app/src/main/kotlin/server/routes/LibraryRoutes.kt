@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import server.db.models.bookFiles
 import server.db.models.books
 import server.db.models.libgenBooks
 import server.db.models.users
@@ -28,7 +29,7 @@ fun Route.libraryRouting() {
              * TODO: Find a better way to do this kind of error handling.
              */
 
-            val bookFile = libgen.download(request.libgenBook).getOrNull() ?: return@post call.respondText(
+            val bookFile = libgen.download(request.libgenBook).getOrNull()?: return@post call.respondText(
                 "Failed to download book.",
                 status = HttpStatusCode.InternalServerError
             )
@@ -40,11 +41,18 @@ fun Route.libraryRouting() {
                 "Failed to add book to database.",
                 status = HttpStatusCode.InternalServerError
             )
-            // Placeholder file.
-            books.addBook(file = 1, user.id, libgenBookId, sentToKindle = false).getOrNull() ?: return@post call.respondText(
+
+            val bookId = books.addBook(user.id, libgenBookId, sentToKindle = false).getOrNull() ?: return@post call.respondText(
                 "Failed to add book to database.",
                 status = HttpStatusCode.InternalServerError
             )
+
+            // TODO: How to handle errors, in this case?
+            bookFiles.addBookFile(bookFile, bookId) ?: return@post call.respondText(
+                "Failed to store book file in the database",
+                status = HttpStatusCode.InternalServerError
+            )
+
         }
     }
 }

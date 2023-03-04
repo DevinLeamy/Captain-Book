@@ -6,13 +6,11 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
-import server.db.DatabaseFactory
 import server.db.DatabaseFactory.dbQuery
 import server.libgen.BookCategory
 
 data class Book(
     val id: Int,
-    val file: Int,
     val title: String,
     val author: String,
     val filesize: String,
@@ -28,8 +26,6 @@ data class Book(
 )
 
 object BooksTable : IntIdTable() {
-    // TODO: Change file to a file type
-    val file = integer("file_placeholder")
     val sentToKindle = bool("send_to_kindle")
     val userId = reference("user_id", UsersTable)
     val libgenBookId = reference("libgen_book_id", LibgenBooksTable)
@@ -41,9 +37,8 @@ class Books {
     /**
      * Create a book
      */
-    suspend fun addBook(file: Int, userId: Int, libgenBookId: Int, sentToKindle: Boolean): Result<Int> = dbQuery {
+    suspend fun addBook(userId: Int, libgenBookId: Int, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {
-            it[BooksTable.file] = file
             it[BooksTable.userId] = userId
             it[BooksTable.libgenBookId] = libgenBookId
             it[BooksTable.sentToKindle] = sentToKindle
@@ -68,7 +63,6 @@ class Books {
         val libgenBook = libgenBooks.bookWithId(row[BooksTable.libgenBookId].value)!!
         return Book(
             id = row[BooksTable.id].value,
-            file = row[BooksTable.file],
             title = libgenBook.title,
             author = libgenBook.author,
             filesize = libgenBook.filesize,

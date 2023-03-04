@@ -7,12 +7,13 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import server.db.models.BookFilesTable
 import server.db.models.BooksTable
 import server.db.models.LibgenBooksTable
 import server.db.models.UsersTable
 
 object DatabaseFactory {
-    // TODO: Add these values to app config.
+    // TODO: Add these values to app config - they obviously shouldn't be plain text.
     private const val DB_PORT = 5432
     private const val DB_NAME = "nouvelle-db"
     private const val DB_USER = "admin"
@@ -27,6 +28,7 @@ object DatabaseFactory {
             SchemaUtils.create(UsersTable)
             SchemaUtils.create(LibgenBooksTable)
             SchemaUtils.create(BooksTable)
+            SchemaUtils.create(BookFilesTable)
         }
     }
 
