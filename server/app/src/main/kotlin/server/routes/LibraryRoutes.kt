@@ -12,6 +12,7 @@ import server.db.models.bookFiles
 import server.db.models.books
 import server.db.models.libgenBooks
 import server.db.models.users
+import server.libgen.LibgenBook
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -19,13 +20,14 @@ fun Route.libraryRouting() {
     authenticate(FIREBASE_AUTH) {
         route("/library") {
             post("/books/add") {
-                val request: AddBookRequest
+                val libgenBook: LibgenBook
                 // TODO: All authenticated routes should have direct access to UserPrinciple,
                 //       not the nullable UserPrinciple?
                 val principal = call.principal<UserPrincipal>()!!
                 try {
-                    request = call.receive()
+                    libgenBook = call.receive()
                 } catch (error: Throwable) {
+                    println("HERE")
                     return@post call.respondText(
                         "Failed to parse request parameters.",
                         status = HttpStatusCode.BadRequest
@@ -36,7 +38,7 @@ fun Route.libraryRouting() {
                  * TODO: Find a better way to do this kind of error handling.
                  */
 
-                val bookFile = libgen.download(request.libgenBook).getOrNull() ?: return@post call.respondText(
+                val bookFile = libgen.download(libgenBook).getOrNull() ?: return@post call.respondText(
                     "Failed to download book.",
                     status = HttpStatusCode.InternalServerError
                 )
@@ -44,7 +46,7 @@ fun Route.libraryRouting() {
                     "Failed to find user.",
                     status = HttpStatusCode.InternalServerError
                 )
-                val libgenBookId = libgenBooks.addBook(request.libgenBook).getOrNull() ?: return@post call.respondText(
+                val libgenBookId = libgenBooks.addBook(libgenBook).getOrNull() ?: return@post call.respondText(
                     "Failed to add book to database.",
                     status = HttpStatusCode.InternalServerError
                 )

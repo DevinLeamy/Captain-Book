@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth"
 import "./Navbar.css"
 
 const Navbar = () => {
-    const { authenticated, onLogin } = useAuth()
+    const { authenticated, onLogin, onLogout } = useAuth()
     return (
         <div className="navbar-container">
             <div className="navbar-left">📚 Nouvelle</div>
@@ -20,6 +20,11 @@ const Navbar = () => {
                 {!authenticated && (
                     <div className="navbar-link login-button" onClick={onLogin}>
                         Login
+                    </div>
+                )}
+                {authenticated && (
+                    <div className="navbar-link login-button" onClick={onLogout}>
+                        Logout
                     </div>
                 )}
             </div>

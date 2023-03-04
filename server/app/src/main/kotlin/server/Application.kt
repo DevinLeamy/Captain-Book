@@ -47,7 +47,6 @@ fun Application.module() {
                     println("[APPLICATION] Failed to create new user.")
                     return@validate null
                 }
-                println("[APPLICATION] Created new user: ${user.email}")
                 UserPrincipal(token.uid, user)
             }
         }

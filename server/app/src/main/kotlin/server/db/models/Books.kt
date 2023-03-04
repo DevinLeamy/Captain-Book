@@ -44,7 +44,7 @@ class Books {
             it[BooksTable.sentToKindle] = sentToKindle
         }
         insertBookStatement.resultedValues?.let {
-            return@dbQuery Result.success(it[0][LibgenBooksTable.id].value)
+            return@dbQuery Result.success(it[0][BooksTable.id].value)
         }
         return@dbQuery Result.failure(Exception("Failed to insert book"))
     }

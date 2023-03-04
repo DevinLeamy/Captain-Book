@@ -10,6 +10,7 @@ type AuthContextT = {
     user: User | undefined
     token: string | undefined
     onLogin: () => void
+    onLogout: () => void
 }
 
 const authProvider = new GoogleAuthProvider()
@@ -41,6 +42,11 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             })
     }
 
+    const onLogout = () => {
+        setAccessToken(undefined)
+        setUser(undefined)
+    }
+
     /**
      * Fetch the JWT verification access token, that can be used for authorization on
      * the backend.
@@ -55,8 +61,9 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             value={{
                 authenticated: user !== undefined,
                 user,
-                onLogin,
                 token: accessToken,
+                onLogin,
+                onLogout,
             }}
         >
             {children}

@@ -11,7 +11,7 @@ type LibraryComponentProps = {
 
 export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthenticated }) => {
     const { authenticated } = useAuth()
-    const { test } = useLibrary()
+    const { books } = useLibrary()
 
     const onSubmitSearch = (queryString: string) => {}
     return (
@@ -21,7 +21,6 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                 <div>
                     <SearchBar onSubmit={onSubmitSearch} />
                     <div>Library</div>
-                    <button onClick={test}>Test</button>
                 </div>
             )}
         </div>

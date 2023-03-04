@@ -25,6 +25,7 @@ class BookFiles {
     suspend fun addBookFile(file: File, bookId: Int): BookFile? {
         dbQuery {
             BookFilesTable.insert {
+                it[title] = file.name.split(".")[0]
                 it[extension] = file.extension
                 it[fileBytes] = file.readBytes()
                 it[BookFilesTable.bookId] = bookId

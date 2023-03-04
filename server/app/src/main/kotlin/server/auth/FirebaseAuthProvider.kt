@@ -53,7 +53,6 @@ class FirebaseAuthProvider(config: FirebaseConfig): AuthenticationProvider(confi
     }
     override suspend fun onAuthenticate(context: AuthenticationContext) {
         val token = fetchAuthHeaderOrNull(context.call)
-        println("TOKEN: $token")
 
         if (token == null) {
             handleUnauthenticated(context)
