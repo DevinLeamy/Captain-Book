@@ -69,7 +69,7 @@ fun Route.libraryRouting() {
                 val principle = call.principal<UserPrincipal>()!!
                 val user = principle.user
 
-                call.respond(BooksRequest(user.books))
+                call.respond(user.books)
             }
         }
     }

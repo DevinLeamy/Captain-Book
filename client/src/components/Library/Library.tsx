@@ -21,6 +21,9 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                 <div>
                     <SearchBar onSubmit={onSubmitSearch} />
                     <div>Library</div>
+                    {books.map((book) => (
+                        <div key={book.id}>{book.title}</div>
+                    ))}
                 </div>
             )}
         </div>

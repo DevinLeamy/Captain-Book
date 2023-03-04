@@ -1,5 +1,6 @@
 package server.db.models
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -25,8 +26,7 @@ class Users {
             id = row[UsersTable.id].value,
             email = row[UsersTable.email],
             kindleEmail = row[UsersTable.kindleEmail],
-            // TODO: Fetch the user's books.
-            books = listOf() // Books().allBooksForUser(row[UsersTable.id].value)
+            books = runBlocking { books.booksWithUserId(row[UsersTable.id].value) }
         )
     }
 

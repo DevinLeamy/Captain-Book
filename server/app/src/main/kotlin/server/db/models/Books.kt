@@ -1,6 +1,7 @@
 package server.db.models
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -9,6 +10,7 @@ import org.jetbrains.exposed.sql.selectAll
 import server.db.DatabaseFactory.dbQuery
 import server.libgen.BookCategory
 
+@Serializable
 data class Book(
     val id: Int,
     val title: String,
@@ -56,6 +58,16 @@ class Books {
             .select { BooksTable.id eq id }
             .map { resultRowToBook(it) }.singleOrNull()
     }
+
+    /**
+     * Fetch books by user id.
+     */
+    suspend fun booksWithUserId(userId: Int): List<Book> = dbQuery {
+        BooksTable
+            .select { BooksTable.userId eq userId }
+            .map { resultRowToBook(it) }.toList()
+    }
+
     /**
      * Convert a ResultRow to a Book.
      */

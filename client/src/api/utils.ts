@@ -1,23 +1,27 @@
 const API_URL = "http://127.0.0.1:8080"
 
-const request = <T>(
-    endpoint: string,
-    body: T | undefined = undefined,
-    accessToken: string | undefined = undefined
-): Promise<Response> => {
+type RequestArgs<T> = {
+    body?: T
+    accessToken?: string
+}
+
+const request = <T>(endpoint: string, args?: RequestArgs<T>): Promise<Response> => {
     let url = `${API_URL}${endpoint}`
-    if (body !== undefined) {
+    if (args?.body !== undefined) {
         return fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${args?.accessToken}`,
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(args.body),
         })
     } else {
         return fetch(url, {
             method: "GET",
+            headers: {
+                Authorization: `Bearer ${args?.accessToken}`,
+            },
         })
     }
 }
