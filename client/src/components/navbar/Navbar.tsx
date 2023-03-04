@@ -9,7 +9,7 @@ const Navbar = () => {
     const { authenticated, onLogin } = useAuth()
     return (
         <div className="navbar-container">
-            <div className="navbar-left">Nouvelle</div>
+            <div className="navbar-left">📚 Nouvelle</div>
             <div className="navbar-right">
                 <Link className="navbar-link" to={"./search"}>
                     Search

@@ -1,14 +1,14 @@
-import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import TextField from "@mui/material/TextField"
+import { useState } from "react"
 
-import "./SearchBar.css";
+import "./SearchBar.css"
 
 interface SearchBarProps {
-    onSubmit: (queryString: string) => void;
+    onSubmit: (queryString: string) => void
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
-    const [queryString, setQueryString] = useState<string>("");
+    const [queryString, setQueryString] = useState<string>("")
 
     return (
         <TextField
@@ -20,9 +20,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
             onChange={(e) => setQueryString(e.target.value)}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    onSubmit(queryString);
+                    onSubmit(queryString)
                 }
             }}
         />
-    );
-};
+    )
+}

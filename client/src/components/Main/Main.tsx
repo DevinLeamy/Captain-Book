@@ -1,22 +1,22 @@
-import React, { ReactNode, useState } from "react";
-import TextField from "@mui/material/TextField";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import React, { ReactNode, useState } from "react"
+import TextField from "@mui/material/TextField"
+import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
-import { Book, BookCategory, BookFormat } from "../../types/Book";
-import { BookComponent } from "../Book/Book";
-import { BookDisplay } from "../BookDisplay/BookDisplay";
-import { SearchBar } from "../SearchBar/SearchBar";
+import { Book, BookCategory, BookFormat } from "../../types/Book"
+import { BookComponent } from "../Book/Book"
+import { BookDisplay } from "../BookDisplay/BookDisplay"
+import { SearchBar } from "../SearchBar/SearchBar"
 
-import "./Main.css";
-import { useSearch } from "../../hooks/useSearch";
+import "./Main.css"
+import { useSearch } from "../../hooks/useSearch"
 
 export const Main = () => {
-    const { searchResults, search, searchStatus } = useSearch();
-    const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"]);
-    const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction");
+    const { searchResults, search, searchStatus } = useSearch()
+    const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
+    const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction")
 
     const onSubmitSearch = (queryString: string) => {
-        console.log("[MAIN] Submitted search");
+        console.log("[MAIN] Submitted search")
         search({
             query: {
                 type: "title",
@@ -27,35 +27,39 @@ export const Main = () => {
                 formats: searchFormats.filter((format) => format !== "all") as BookFormat[],
                 languages: ["english"],
             },
-        });
-    };
+        })
+    }
 
     const onSearchFormatChange = (_e: React.MouseEvent<HTMLElement>, newFormats: string[]) => {
-        setSearchFormats(newFormats);
-    };
+        setSearchFormats(newFormats)
+    }
 
     const onSearchCategoryChange = (
         _e: React.MouseEvent<HTMLElement>,
         newCategory: BookCategory
     ) => {
-        setSearchCategory(newCategory);
-    };
+        if (newCategory === null) {
+            setSearchCategory("non-fiction" === searchCategory ? "fiction" : "non-fiction")
+        } else {
+            setSearchCategory(newCategory)
+        }
+    }
 
     const loadingDisplay = (): ReactNode => {
         if (searchStatus === "waiting") {
-            return <h2>Loading...</h2>;
+            return <h2>Loading...</h2>
         }
-        return null;
-    };
+        return null
+    }
 
     const loadedDisplay = (): ReactNode => {
         if (searchStatus === "finished" && searchResults.length === 0) {
-            return <h2>No results founds.</h2>;
+            return <h2>No results founds.</h2>
         } else if (searchStatus === "failed") {
-            return <h2>Search failed.</h2>;
+            return <h2>Search failed.</h2>
         }
-        return null;
-    };
+        return null
+    }
 
     return (
         <div className="main-c-container">
@@ -92,5 +96,5 @@ export const Main = () => {
                 ))}
             </BookDisplay>
         </div>
-    );
-};
+    )
+}
