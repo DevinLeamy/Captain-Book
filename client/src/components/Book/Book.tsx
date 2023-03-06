@@ -13,13 +13,13 @@ import { useAuth } from "../../hooks/useAuth"
 
 import "./Book.css"
 
-type BookComponentProps = {
+type BookTableRowProps = {
     book: Book
 }
 
 type RequestStatus = "waiting" | "done"
 
-export const BookComponent = ({ book }: BookComponentProps) => {
+export const BookTableRow = ({ book }: BookTableRowProps) => {
     const { authenticated, token } = useAuth()
     const [downloadStatus, setDownloadStatus] = useState<RequestStatus | undefined>()
     const [sendToKindleStatus, setSendToKindleStatus] = useState<RequestStatus | undefined>()

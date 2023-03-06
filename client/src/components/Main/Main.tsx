@@ -1,9 +1,8 @@
 import React, { ReactNode, useState } from "react"
-import TextField from "@mui/material/TextField"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import { Book, BookCategory, BookFormat } from "../../types/Book"
-import { BookComponent } from "../Book/Book"
+import { BookTableRow } from "../Book/Book"
 import { BookDisplay } from "../BookDisplay/BookDisplay"
 import { SearchBar } from "../SearchBar/SearchBar"
 
@@ -92,7 +91,7 @@ export const Main = () => {
             </div>
             <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
                 {searchResults.map((book) => (
-                    <BookComponent key={book.md5} book={book} />
+                    <BookTableRow key={book.md5} book={book} />
                 ))}
             </BookDisplay>
         </div>
