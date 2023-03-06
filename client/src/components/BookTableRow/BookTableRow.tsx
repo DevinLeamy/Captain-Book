@@ -11,7 +11,7 @@ const image = require("../../assets/book.jpeg")
 import { NouvelleAPI } from "../../api/api"
 import { useAuth } from "../../hooks/useAuth"
 
-import "./Book.css"
+import "./BookTableRow.css"
 
 type BookTableRowProps = {
     book: Book

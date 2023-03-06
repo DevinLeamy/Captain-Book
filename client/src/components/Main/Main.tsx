@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from "react"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import { Book, BookCategory, BookFormat } from "../../types/Book"
-import { BookTableRow } from "../Book/Book"
+import { BookTableRow } from "../BookTableRow/BookTableRow"
 import { BookDisplay } from "../BookDisplay/BookDisplay"
 import { SearchBar } from "../SearchBar/SearchBar"
 

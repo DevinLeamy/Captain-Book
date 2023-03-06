@@ -1,0 +1,19 @@
+.book-image-display-container {
+    --book-width: 200px;
+    --book-image-height: calc(var(--book-width) * 1.5);
+    --book-title-height: 50px;
+    width: var(--book-width);
+    height: calc(var(--book-image-height) + var(--book-title-height));
+}
+
+.book-cover {
+    box-sizing: border-box;
+    border: 1px solid white;
+    width: 100%;
+    height: var(--book-image-height);
+}
+
+.book-title-container {
+    width: 100%;
+    height: var(--book-title-height);
+}

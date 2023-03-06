@@ -3,6 +3,10 @@ import { useAuth } from "../../hooks/useAuth"
 
 import "./BookDisplay.css"
 
+/**
+ * TODO: Separate this component into BookDisplay and BookTableDisplay.
+ */
+
 type BookDisplayProps = {
     /// Display while searching.
     before: ReactNode
