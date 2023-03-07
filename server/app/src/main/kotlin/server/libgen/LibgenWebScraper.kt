@@ -100,7 +100,7 @@ class LibgenWebScraper {
             withAttribute = "alt" to "cover"
             findFirst {
                 if (this.eachSrc.isNotEmpty()) {
-                    book.coverurl = Optional.of(this.eachSrc[0])
+                    book.coverurl = Optional.of("https://libgen.is${this.eachSrc[0]}")
                 }
             }
         }

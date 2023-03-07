@@ -37,7 +37,7 @@ val books = Books()
 
 class Books {
     /**
-     * Create a book
+     * Create a book.
      */
     suspend fun addBook(userId: Int, libgenBookId: Int, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {

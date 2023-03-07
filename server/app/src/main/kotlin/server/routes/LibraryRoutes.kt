@@ -27,7 +27,6 @@ fun Route.libraryRouting() {
                 try {
                     libgenBook = call.receive()
                 } catch (error: Throwable) {
-                    println("HERE")
                     return@post call.respondText(
                         "Failed to parse request parameters.",
                         status = HttpStatusCode.BadRequest
