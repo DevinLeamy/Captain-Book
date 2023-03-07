@@ -23,7 +23,6 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
             {authenticated && (
                 <>
                     <SearchBar onSubmit={onSubmitSearch} />
-                    <h1>- Library -</h1>
                     <BookContainer>
                         {books.map((book) => (
                             <BookImageDisplay key={book.id} book={book} />

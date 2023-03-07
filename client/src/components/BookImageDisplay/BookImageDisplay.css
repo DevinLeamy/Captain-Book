@@ -1,9 +1,9 @@
 .book-image-display-container {
     --book-width: 200px;
     --book-image-height: calc(var(--book-width) * 1.5);
-    --book-title-height: 50px;
+    --book-info-height: 50px;
     width: var(--book-width);
-    height: calc(var(--book-image-height) + var(--book-title-height));
+    min-height: calc(var(--book-image-height) + var(--book-info-height));
 }
 
 .book-cover {
@@ -11,7 +11,17 @@
     height: var(--book-image-height);
 }
 
-.book-title-container {
+.book-info-container {
     width: 100%;
-    height: var(--book-title-height);
+    min-height: var(--book-info-height);
+    display: flex;
+    flex-direction: column;
+}
+
+.book-title {
+    font-weight: bold;
+}
+
+.book-author {
+    color: var(--blue);
 }
