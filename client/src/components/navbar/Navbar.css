@@ -22,7 +22,6 @@
     width: calc(100% - var(--navbar-left-width));
     justify-content: flex-end;
     height: var(--navbar-height);
-    gap: 20px;
 }
 
 .navbar-link {
@@ -30,6 +29,13 @@
     height: var(--navbar-height);
     color: rgb(255, 255, 255);
     font-size: 15px;
+    padding: 0px 10px; 
+    /* Trick so the elements dont move */
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.selected-link {
+    border: 1px solid var(--white);
 }
 
 .login-button:hover {
