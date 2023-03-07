@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react"
-import { useAuth } from "../../hooks/useAuth"
 
 import "./BookDisplay.css"
 
@@ -18,7 +17,6 @@ type BookDisplayProps = {
 
 /// Display a set of books passed in as children.
 const BookDisplay = ({ before, after, children }: BookDisplayProps) => {
-    const { authenticated } = useAuth()
     return (
         <div className="book-display-container">
             {before !== null && before}
@@ -33,7 +31,7 @@ const BookDisplay = ({ before, after, children }: BookDisplayProps) => {
                             <th>Format</th>
                             <th>Download</th>
                             <th>Send to Kindle</th>
-                            {authenticated && <th>Add to Library</th>}
+                            <th>Add to Library</th>
                         </tr>
                     </thead>
                     <tbody>{children}</tbody>
