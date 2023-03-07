@@ -8,8 +8,10 @@ import { SearchBar } from "../SearchBar/SearchBar"
 
 import "./Main.css"
 import { useSearch } from "../../hooks/useSearch"
+import { useAuth } from "../../hooks/useAuth"
 
 export const Main = () => {
+    const { authenticated } = useAuth()
     const { searchResults, search, searchStatus } = useSearch()
     const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
     const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction")
@@ -62,38 +64,43 @@ export const Main = () => {
 
     return (
         <div className="main-c-container">
-            <SearchBar onSubmit={onSubmitSearch} />
-            <div className="search-options-container">
-                <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
-                    <ToggleButton size="small" value="epub">
-                        EPUB
-                    </ToggleButton>
-                    <ToggleButton size="small" value="mobi">
-                        MOBI
-                    </ToggleButton>
-                    <ToggleButton size="small" value="pdf">
-                        PDF
-                    </ToggleButton>
-                </ToggleButtonGroup>
+            {!authenticated && <h3>Login to search.</h3>}
+            {authenticated && (
+                <>
+                    <SearchBar onSubmit={onSubmitSearch} />
+                    <div className="search-options-container">
+                        <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
+                            <ToggleButton size="small" value="epub">
+                                EPUB
+                            </ToggleButton>
+                            <ToggleButton size="small" value="mobi">
+                                MOBI
+                            </ToggleButton>
+                            <ToggleButton size="small" value="pdf">
+                                PDF
+                            </ToggleButton>
+                        </ToggleButtonGroup>
 
-                <ToggleButtonGroup
-                    value={searchCategory}
-                    exclusive
-                    onChange={onSearchCategoryChange}
-                >
-                    <ToggleButton size="small" value="fiction">
-                        Fiction
-                    </ToggleButton>
-                    <ToggleButton size="small" value="non-fiction">
-                        Non-fiction
-                    </ToggleButton>
-                </ToggleButtonGroup>
-            </div>
-            <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
-                {searchResults.map((book) => (
-                    <BookTableRow key={book.md5} book={book} />
-                ))}
-            </BookDisplay>
+                        <ToggleButtonGroup
+                            value={searchCategory}
+                            exclusive
+                            onChange={onSearchCategoryChange}
+                        >
+                            <ToggleButton size="small" value="fiction">
+                                Fiction
+                            </ToggleButton>
+                            <ToggleButton size="small" value="non-fiction">
+                                Non-fiction
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </div>
+                    <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
+                        {searchResults.map((book) => (
+                            <BookTableRow key={book.md5} book={book} />
+                        ))}
+                    </BookDisplay>
+                </>
+            )}
         </div>
     )
 }

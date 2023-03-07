@@ -19,10 +19,15 @@ const usePersistentState = <T>(name: string, initialValue: T): usePersistentStat
     }, [])
 
     /**
-     * Store a data locally.
+     * Store a data locally. If data is undefined,
+     * it removes the entry from local storage.
      */
     const storeLocally = (data: T) => {
-        localStorage.setItem(name, JSON.stringify(data))
+        if (data === undefined) {
+            localStorage.removeItem(name)
+        } else {
+            localStorage.setItem(name, JSON.stringify(data))
+        }
     }
 
     /**
