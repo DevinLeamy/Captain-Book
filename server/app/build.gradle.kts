@@ -54,6 +54,8 @@ dependencies {
     // Firebase
     val firebaseVersion = "9.1.1"
     implementation("com.google.firebase:firebase-admin:$firebaseVersion")
+    // AWS SDK
+    implementation("aws.sdk.kotlin:s3:0.21.1-beta")
 }
 
 testing {

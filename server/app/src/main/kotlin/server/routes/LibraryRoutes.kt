@@ -8,11 +8,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import server.auth.FIREBASE_AUTH
 import server.auth.UserPrincipal
+import server.db.S3
 import server.db.models.bookFiles
 import server.db.models.books
 import server.db.models.libgenBooks
 import server.db.models.users
 import server.libgen.LibgenBook
+import server.utils.downloadImageByUrl
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -69,6 +71,29 @@ fun Route.libraryRouting() {
                 val user = principle.user
 
                 call.respond(user.books)
+            }
+            /**
+             * Stores a book's image in an S3 bucket, fetchs the URL of the image,
+             * and returns the url.
+             */
+            post("/test/image") {
+                val libgenBook: LibgenBook
+                // TODO: All authenticated routes should have direct access to UserPrinciple,
+                //       not the nullable UserPrinciple?
+                val principal = call.principal<UserPrincipal>()!!
+                try {
+                    libgenBook = call.receive()
+                } catch (error: Throwable) {
+                    return@post call.respondText(
+                        "Failed to parse request parameters.",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+                println("Downloading ${libgenBook.coverurl}")
+                val imageFile = downloadImageByUrl(libgenBook.coverurl)
+                val s3Key = S3.putImage(imageFile)
+
+                call.respondText("https://nouvelle-bucket.s3.amazonaws.com/$s3Key")
             }
         }
     }
