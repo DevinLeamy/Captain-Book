@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import server.db.DatabaseFactory.dbQuery
+import server.db.S3
 import server.libgen.BookCategory
 
 @Serializable
@@ -29,6 +30,7 @@ data class Book(
 
 object BooksTable : IntIdTable() {
     val sentToKindle = bool("send_to_kindle")
+    val coverImageKey = varchar("cover_image_key", 200)
     val userId = reference("user_id", UsersTable)
     val libgenBookId = reference("libgen_book_id", LibgenBooksTable)
 }
@@ -39,9 +41,10 @@ class Books {
     /**
      * Create a book.
      */
-    suspend fun addBook(userId: Int, libgenBookId: Int, sentToKindle: Boolean): Result<Int> = dbQuery {
+    suspend fun addBook(userId: Int, libgenBookId: Int, coverImageKey: String, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {
             it[BooksTable.userId] = userId
+            it[BooksTable.coverImageKey] = coverImageKey
             it[BooksTable.libgenBookId] = libgenBookId
             it[BooksTable.sentToKindle] = sentToKindle
         }
@@ -84,7 +87,8 @@ class Books {
             publisher = libgenBook.publisher,
             edition = libgenBook.edition,
             extension = libgenBook.extension,
-            coverurl = libgenBook.coverurl,
+            // Fetch a pre-signed (secure) url, from S3.
+            coverurl = S3.generatePresignedUrl(row[BooksTable.coverImageKey]),
             category = libgenBook.category,
             sendToKindle = row[BooksTable.sentToKindle]
         )

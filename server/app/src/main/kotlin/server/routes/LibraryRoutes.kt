@@ -43,6 +43,10 @@ fun Route.libraryRouting() {
                     "Failed to download book.",
                     status = HttpStatusCode.InternalServerError
                 )
+                // Download the image and store it in an S3 bucket.
+                val imageFile = downloadImageByUrl(libgenBook.coverurl)
+                val s3ImageKey = S3.putImage(imageFile)
+
                 val user = users.userWithEmail(principal.user.email) ?: return@post call.respondText(
                     "Failed to find user.",
                     status = HttpStatusCode.InternalServerError
@@ -52,7 +56,7 @@ fun Route.libraryRouting() {
                     status = HttpStatusCode.InternalServerError
                 )
 
-                val bookId = books.addBook(user.id, libgenBookId, sentToKindle = false).getOrNull()
+                val bookId = books.addBook(user.id, libgenBookId, s3ImageKey, sentToKindle = false).getOrNull()
                     ?: return@post call.respondText(
                         "Failed to add book to database.",
                         status = HttpStatusCode.InternalServerError
@@ -71,29 +75,6 @@ fun Route.libraryRouting() {
                 val user = principle.user
 
                 call.respond(user.books)
-            }
-            /**
-             * Stores a book's image in an S3 bucket, fetchs the URL of the image,
-             * and returns the url.
-             */
-            post("/test/image") {
-                val libgenBook: LibgenBook
-                // TODO: All authenticated routes should have direct access to UserPrinciple,
-                //       not the nullable UserPrinciple?
-                val principal = call.principal<UserPrincipal>()!!
-                try {
-                    libgenBook = call.receive()
-                } catch (error: Throwable) {
-                    return@post call.respondText(
-                        "Failed to parse request parameters.",
-                        status = HttpStatusCode.BadRequest
-                    )
-                }
-                println("Downloading ${libgenBook.coverurl}")
-                val imageFile = downloadImageByUrl(libgenBook.coverurl)
-                val s3Key = S3.putImage(imageFile)
-
-                call.respondText("https://nouvelle-bucket.s3.amazonaws.com/$s3Key")
             }
         }
     }

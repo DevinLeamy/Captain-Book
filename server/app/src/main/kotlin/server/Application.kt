@@ -28,14 +28,6 @@ class Store(
 val store = Store()
 
 fun main(args: Array<String>) {
-    runBlocking {
-        val coverurl = "https://libgen.is//fictioncovers/2327000/086cff2fb6592870fe54a8053a1aa08d-g.jpg"
-        val imageFile = downloadImageByUrl(coverurl)
-        val s3Key = S3.putImage(imageFile)
-        println("Key: $s3Key")
-        val url = S3.generatePresignedUrl(s3Key)
-        println("Url: $url")
-    }
     return io.ktor.server.netty.EngineMain.main(args)
 }
 

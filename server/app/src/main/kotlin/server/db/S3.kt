@@ -18,15 +18,16 @@ import kotlin.time.Duration.Companion.seconds
 object S3 {
     private const val BUCKET_NAME = "nouvelle-bucket"
     private const val REGION = "us-east-1"
-    private val config = S3Client.Config {
-        region = REGION
-    }
-
-    private val client = S3Client {
-        region = REGION
-    }
 
     suspend fun putFile(file: File): String {
+        /**
+         * TODO: I was receiving a credential error, when I had a single
+         * S3Client property that. Having one client would be ideal, because then
+         * we're not reinitializing the client on every request.
+         */
+        val client = S3Client {
+            region = REGION
+        }
         val key = UUID.randomUUID().toString()
         val metadata = mutableMapOf<String, String>()
         metadata["name"] = file.nameWithoutExtension
@@ -57,7 +58,10 @@ object S3 {
             bucket = BUCKET_NAME
             this.key = key
         }
-        val getObjectPresignRequest = getObjectRequest.presign(config, 3600.seconds)
+        val getObjectPresignRequest = getObjectRequest.presign(
+            S3Client.Config { region = REGION },
+            3600.seconds
+        )
         return getObjectPresignRequest.url.toString()
     }
 }

@@ -7,8 +7,6 @@
 }
 
 .book-cover {
-    box-sizing: border-box;
-    border: 1px solid white;
     width: 100%;
     height: var(--book-image-height);
 }

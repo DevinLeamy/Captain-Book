@@ -1,6 +1,5 @@
 package server.db.models
 
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -9,7 +8,6 @@ import org.jetbrains.exposed.sql.selectAll
 import server.db.DatabaseFactory.dbQuery
 import server.libgen.BookCategory
 import server.libgen.LibgenBook
-import java.util.*
 
 object LibgenBooksTable: IntIdTable() {
     // TODO: Libgen stores this as: "int(15)"

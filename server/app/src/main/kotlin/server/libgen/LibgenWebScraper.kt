@@ -100,6 +100,7 @@ class LibgenWebScraper {
             withAttribute = "alt" to "cover"
             findFirst {
                 if (this.eachSrc.isNotEmpty()) {
+                    // TODO: The host should be the same as the host url of "bookPageUrl".
                     book.coverurl = Optional.of("https://libgen.is${this.eachSrc[0]}")
                 }
             }
