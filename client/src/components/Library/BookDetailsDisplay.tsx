@@ -8,6 +8,8 @@ import SendIcon from "@mui/icons-material/Send"
 import { Book } from "../../types/Book"
 
 import "./BookDetailsDisplay.css"
+import { useAuth } from "../../hooks/useAuth"
+import { NouvelleAPI } from "../../api/api"
 
 type BookDetailsDisplayT = {
     book: Book
@@ -26,6 +28,15 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
     onFocusPrevious,
     onFocusStop,
 }) => {
+    const { token } = useAuth()
+    let kindleEmail = "devinleamy@gmail.com"
+    // let kindleEmail = "the420kindle@kindle.com"
+
+    const onSendToKindle = async () => {
+        let success = await NouvelleAPI.sendLibraryBookToKindle(kindleEmail, book, token!)
+        alert(`Send to kindle: ${success}`)
+    }
+
     return (
         <div className="book-details-display-container">
             <div className="book-details-inner-container">
@@ -40,7 +51,7 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
                         <img className="book-details-image" src={book.coverurl} />
                         <div className="book-actions">
                             <a>
-                                <Button variant="outlined" size="small">
+                                <Button onClick={onSendToKindle} variant="outlined" size="small">
                                     <SendIcon className="rotate-plane" />
                                 </Button>
                             </a>

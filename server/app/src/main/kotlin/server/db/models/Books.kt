@@ -97,6 +97,20 @@ class Books {
             sendToKindle = row[BooksTable.sentToKindle]
         )
     }
+
+    /**
+     * Fetch the S3 book file key, for a given book.
+     *
+     * There is an explicit function for this because "resultRowToBook"
+     * converts these keys into a presigned url, so they aren't accessible.
+     */
+    suspend fun getBookFileKey(bookId: Int): String? = dbQuery {
+        BooksTable
+            .select { BooksTable.id eq bookId }
+            .map { resultRow -> resultRow[BooksTable.bookFileKey] }
+            .firstOrNull()
+    }
+
     /**
      * Fetch all books.
      */

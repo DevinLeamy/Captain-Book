@@ -5,6 +5,7 @@ import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
 import aws.sdk.kotlin.services.s3.presigners.presign
 import aws.smithy.kotlin.runtime.content.asByteStream
+import aws.smithy.kotlin.runtime.content.writeToFile
 import server.utils.extensionToMimeType
 import java.io.File
 import java.util.*
@@ -29,6 +30,8 @@ object S3 {
             region = REGION
         }
         val key = UUID.randomUUID().toString() + file.name
+        metadata["name"] = file.nameWithoutExtension
+        metadata["extension"] = file.extension
 
         val request = PutObjectRequest {
             bucket = BUCKET_NAME
@@ -47,15 +50,36 @@ object S3 {
 
     suspend fun putImage(file: File): String {
         val metadata = mutableMapOf<String, String>()
-        metadata["name"] = file.nameWithoutExtension
-        metadata["extension"] = file.extension
         return putFile(file, metadata)
     }
     suspend fun putBook(file: File): String {
         val metadata = mutableMapOf<String, String>()
-        metadata["name"] = file.nameWithoutExtension
-        metadata["extension"] = file.extension
         return putFile(file, metadata)
+    }
+
+    suspend fun getFile(key: String): File? {
+        val client = S3Client {
+            region = REGION
+        }
+        val request = GetObjectRequest {
+            bucket = BUCKET_NAME
+            this.key = key
+        }
+
+        val file: File? = client.getObject(request) { response ->
+            try {
+                val tempFile = File.createTempFile(
+                    response.metadata?.get("name"),
+                    ".${response.metadata?.get("extension")}",
+                )
+                response.body?.writeToFile(tempFile)
+                return@getObject tempFile
+            } catch (e: Exception) {
+                return@getObject null
+            }
+        }
+
+        return file
     }
 
     /**

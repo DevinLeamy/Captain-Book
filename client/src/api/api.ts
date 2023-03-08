@@ -8,6 +8,7 @@ interface INouvelleAPI {
     search: (search: LibgenSearch) => Promise<Book[]>
     download: (book: Book) => Promise<File | undefined>
     sendToKindle: (kindleEmail: string, book: Book) => Promise<boolean>
+    sendLibraryBookToKindle: (kindleEmail: string, book: Book, token: string) => Promise<boolean>
     addToLibrary: (book: Book, token: string) => Promise<boolean>
     getBooks: (token: string) => Promise<Book[]>
 }
@@ -60,6 +61,25 @@ const sendToKindle = async (kindleEmail: string, book: Book): Promise<boolean> =
 }
 
 /**
+ * Send {book} to {kindleEmail}, where {book} is in the user's library.
+ * Returns whether the request succeeded.
+ */
+const sendLibraryBookToKindle = async (
+    kindleEmail: string,
+    book: Book,
+    token: string
+): Promise<boolean> => {
+    const response = await request("/library/books/send", {
+        body: {
+            kindleEmail,
+            book,
+        },
+        accessToken: token,
+    })
+    return response.ok
+}
+
+/**
  * Add a book to the user's collection.
  */
 const addToLibrary = async (book: Book, token: string): Promise<boolean> => {
@@ -74,7 +94,7 @@ const addToLibrary = async (book: Book, token: string): Promise<boolean> => {
  * Fetch books from a user's collection.
  */
 const getBooks = async (token: string): Promise<Book[]> => {
-    let response = await request("/library/books", {
+    let response = await request("/library/books/", {
         accessToken: token,
     })
     if (!response.ok) {
@@ -90,6 +110,7 @@ export const NouvelleAPI: INouvelleAPI = {
     search,
     download,
     sendToKindle,
+    sendLibraryBookToKindle,
     addToLibrary,
     getBooks,
 }
