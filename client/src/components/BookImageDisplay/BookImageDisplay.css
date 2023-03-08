@@ -3,7 +3,11 @@
     --book-image-height: calc(var(--book-width) * 1.5);
     --book-info-height: 50px;
     width: var(--book-width);
-    min-height: calc(var(--book-image-height) + var(--book-info-height));
+    height: calc(var(--book-image-height) + var(--book-info-height));
+}
+
+.book-image-display-container:hover {
+    cursor: pointer;
 }
 
 .book-cover {
@@ -13,7 +17,7 @@
 
 .book-info-container {
     width: 100%;
-    min-height: var(--book-info-height);
+    height: var(--book-info-height);
     display: flex;
     flex-direction: column;
 }

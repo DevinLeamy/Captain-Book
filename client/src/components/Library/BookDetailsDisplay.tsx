@@ -57,6 +57,7 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
                         <h3>{`Pages: ${book.pages}`}</h3>
                         <h3>{`Year: ${book.year}`}</h3>
                         <h3>{`Language: ${book.language}`}</h3>
+                        <h3>{`Format: ${book.extension.toLowerCase()}`}</h3>
                         <h3>{`Publisher: ${book.publisher}`}</h3>
                         <h3>{`Edition: ${book.edition}`}</h3>
                     </Grid>
