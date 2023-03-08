@@ -2,6 +2,8 @@ import { Button, Grid } from "@mui/material"
 import ClearIcon from "@mui/icons-material/Clear"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload"
+import SendIcon from "@mui/icons-material/Send"
 
 import { Book } from "../../types/Book"
 
@@ -29,19 +31,23 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
             <div className="book-details-inner-container">
                 {/* Exit focus button. */}
                 <div className="book-details-exit-button">
-                    <Button variant="contained" onClick={onFocusStop}>
+                    <Button variant="outlined" onClick={onFocusStop}>
                         <ClearIcon />
                     </Button>
                 </div>
                 <Grid container spacing={4}>
                     <Grid item xs={5}>
                         <img className="book-details-image" src={book.coverurl} />
-                        <div className="book-action-button">
-                            <Button>Send to kindle</Button>
-                        </div>
-                        <div className="book-action-button">
+                        <div className="book-actions">
+                            <a>
+                                <Button variant="outlined" size="small">
+                                    <SendIcon className="rotate-plane" />
+                                </Button>
+                            </a>
                             <a href={book.bookFileUrl}>
-                                <Button>Download</Button>
+                                <Button variant="outlined" size="small">
+                                    <CloudDownloadIcon />
+                                </Button>
                             </a>
                         </div>
                     </Grid>
@@ -58,12 +64,12 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
 
                 {/* Bottom navigation buttons. */}
                 <div className="change-book-button previous-book-button">
-                    <Button variant="contained" onClick={onFocusPrevious}>
+                    <Button variant="outlined" onClick={onFocusPrevious}>
                         <ArrowBackIosNewIcon />
                     </Button>
                 </div>
                 <div className="change-book-button next-book-button">
-                    <Button variant="contained" onClick={onFocusNext}>
+                    <Button variant="outlined" onClick={onFocusNext}>
                         <ArrowForwardIosIcon />
                     </Button>
                 </div>

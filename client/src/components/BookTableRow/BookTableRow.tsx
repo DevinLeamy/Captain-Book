@@ -1,13 +1,11 @@
 import { Button } from "@mui/material"
 import { default as downloadLocally } from "downloadjs"
-import { useState } from "react"
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload"
 import CircularProgress from "@mui/material/CircularProgress"
 import SendIcon from "@mui/icons-material/Send"
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd"
 
 import { Book } from "../../types/Book"
-const image = require("../../assets/book.jpeg")
 import { NouvelleAPI } from "../../api/api"
 import { useAuth } from "../../hooks/useAuth"
 import { LoadingContainer } from "../Common"
@@ -18,8 +16,6 @@ import { useAsyncAction } from "../../hooks/useAsyncAction"
 type BookTableRowProps = {
     book: Book
 }
-
-type RequestStatus = "waiting" | "done"
 
 // TODO: This should be part of the User data.
 const KINDLE_EMAIL = "devinleamy@gmail.com"
