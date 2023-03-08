@@ -24,6 +24,7 @@ data class Book(
     val edition: String,
     val extension: String,
     var coverurl: String,
+    val bookFileUrl: String,
     val category: BookCategory = BookCategory.NON_FICTION,
     var sendToKindle: Boolean = false,
 )
@@ -31,6 +32,7 @@ data class Book(
 object BooksTable : IntIdTable() {
     val sentToKindle = bool("send_to_kindle")
     val coverImageKey = varchar("cover_image_key", 200)
+    val bookFileKey = varchar("book_file_key", 200)
     val userId = reference("user_id", UsersTable)
     val libgenBookId = reference("libgen_book_id", LibgenBooksTable)
 }
@@ -41,10 +43,11 @@ class Books {
     /**
      * Create a book.
      */
-    suspend fun addBook(userId: Int, libgenBookId: Int, coverImageKey: String, sentToKindle: Boolean): Result<Int> = dbQuery {
+    suspend fun addBook(userId: Int, libgenBookId: Int, coverImageKey: String, bookFileKey: String, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {
             it[BooksTable.userId] = userId
             it[BooksTable.coverImageKey] = coverImageKey
+            it[BooksTable.bookFileKey] = bookFileKey
             it[BooksTable.libgenBookId] = libgenBookId
             it[BooksTable.sentToKindle] = sentToKindle
         }
@@ -87,8 +90,9 @@ class Books {
             publisher = libgenBook.publisher,
             edition = libgenBook.edition,
             extension = libgenBook.extension,
-            // Fetch a pre-signed (secure) url, from S3.
+            // Fetch a pre-signed (secure) urls, from S3.
             coverurl = S3.generatePresignedUrl(row[BooksTable.coverImageKey]),
+            bookFileUrl = S3.generatePresignedUrl(row[BooksTable.bookFileKey]),
             category = libgenBook.category,
             sendToKindle = row[BooksTable.sentToKindle]
         )

@@ -9,7 +9,6 @@ import io.ktor.server.routing.*
 import server.auth.FIREBASE_AUTH
 import server.auth.UserPrincipal
 import server.db.S3
-import server.db.models.bookFiles
 import server.db.models.books
 import server.db.models.libgenBooks
 import server.db.models.users
@@ -43,6 +42,7 @@ fun Route.libraryRouting() {
                     "Failed to download book.",
                     status = HttpStatusCode.InternalServerError
                 )
+                val s3BookKey = S3.putBook(bookFile)
                 // Download the image and store it in an S3 bucket.
                 val imageFile = downloadImageByUrl(libgenBook.coverurl)
                 val s3ImageKey = S3.putImage(imageFile)
@@ -56,17 +56,11 @@ fun Route.libraryRouting() {
                     status = HttpStatusCode.InternalServerError
                 )
 
-                val bookId = books.addBook(user.id, libgenBookId, s3ImageKey, sentToKindle = false).getOrNull()
+                books.addBook(user.id, libgenBookId, s3ImageKey, s3BookKey, sentToKindle = false).getOrNull()
                     ?: return@post call.respondText(
                         "Failed to add book to database.",
                         status = HttpStatusCode.InternalServerError
                     )
-
-                // TODO: How to handle errors, in this case?
-                bookFiles.addBookFile(bookFile, bookId) ?: return@post call.respondText(
-                    "Failed to store book file in the database",
-                    status = HttpStatusCode.InternalServerError
-                )
 
                 call.respondText("Added book to the library")
             }

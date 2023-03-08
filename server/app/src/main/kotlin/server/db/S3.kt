@@ -1,11 +1,11 @@
 package server.db
 
-import aws.sdk.kotlin.runtime.auth.credentials.EnvironmentCredentialsProvider
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
 import aws.sdk.kotlin.services.s3.presigners.presign
 import aws.smithy.kotlin.runtime.content.asByteStream
+import server.utils.extensionToMimeType
 import java.io.File
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
@@ -19,7 +19,7 @@ object S3 {
     private const val BUCKET_NAME = "nouvelle-bucket"
     private const val REGION = "us-east-1"
 
-    suspend fun putFile(file: File): String {
+    private suspend fun putFile(file: File, metadata: MutableMap<String, String>): String {
         /**
          * TODO: I was receiving a credential error, when I had a single
          * S3Client property that. Having one client would be ideal, because then
@@ -28,16 +28,14 @@ object S3 {
         val client = S3Client {
             region = REGION
         }
-        val key = UUID.randomUUID().toString()
-        val metadata = mutableMapOf<String, String>()
-        metadata["name"] = file.nameWithoutExtension
-        metadata["extension"] = file.extension
+        val key = UUID.randomUUID().toString() + file.name
 
         val request = PutObjectRequest {
             bucket = BUCKET_NAME
             this.key = key
             this.metadata = metadata
             body = file.asByteStream()
+            contentType = extensionToMimeType[file.extension]
         }
 
         client.use { s3 ->
@@ -47,7 +45,18 @@ object S3 {
         return key
     }
 
-    suspend fun putImage(file: File): String = putFile(file)
+    suspend fun putImage(file: File): String {
+        val metadata = mutableMapOf<String, String>()
+        metadata["name"] = file.nameWithoutExtension
+        metadata["extension"] = file.extension
+        return putFile(file, metadata)
+    }
+    suspend fun putBook(file: File): String {
+        val metadata = mutableMapOf<String, String>()
+        metadata["name"] = file.nameWithoutExtension
+        metadata["extension"] = file.extension
+        return putFile(file, metadata)
+    }
 
     /**
      * Generate a pre-signed URL for a given object, like an image.

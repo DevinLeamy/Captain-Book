@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import server.db.models.BookFilesTable
 import server.db.models.BooksTable
 import server.db.models.LibgenBooksTable
 import server.db.models.UsersTable
@@ -28,7 +27,6 @@ object DatabaseFactory {
             SchemaUtils.create(UsersTable)
             SchemaUtils.create(LibgenBooksTable)
             SchemaUtils.create(BooksTable)
-            SchemaUtils.create(BookFilesTable)
         }
     }
 

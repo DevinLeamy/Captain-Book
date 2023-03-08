@@ -7,14 +7,11 @@ import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Attachments
 import com.sendgrid.helpers.mail.objects.Content
 import com.sendgrid.helpers.mail.objects.Email
+import server.utils.extensionToMimeType
 import java.io.File
 import java.util.Base64
 
-val extensionToMimeType = mapOf(
-    "pdf" to "application/pdf",
-    "epub" to "application/epub+zip",
-    "mobi" to "application/x-mobipocket-ebook"
-)
+
 
 class MailClient {
     private val sendgrid = SendGrid(System.getenv("SENDGRID_API_KEY"))

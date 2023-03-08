@@ -40,7 +40,9 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
                             <Button>Send to kindle</Button>
                         </div>
                         <div className="book-action-button">
-                            <Button>Download</Button>
+                            <a href={book.bookFileUrl}>
+                                <Button>Download</Button>
+                            </a>
                         </div>
                     </Grid>
                     <Grid item xs={6}>
