@@ -6,5 +6,6 @@
 
 .page-container {
   width: 100%;
-  height: calc(100% - var(--navbar-height));
+  /* Not sure why the extra -65px is needed */
+  height: calc(100% - var(--navbar-height) - 65px);
 }

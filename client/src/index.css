@@ -27,6 +27,7 @@ body {
 /* Removes blue border of selected buttons */
 *:focus {
   outline: 0;
+  box-sizing: border-box;
 }
 
 /* Remove default style from links */

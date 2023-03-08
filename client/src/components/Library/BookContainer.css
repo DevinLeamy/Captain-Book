@@ -4,4 +4,6 @@
     height: 100%;
     column-gap: 30px;
     padding-top: 20px;
+    position: relative;
+    flex-wrap: wrap;
 }
