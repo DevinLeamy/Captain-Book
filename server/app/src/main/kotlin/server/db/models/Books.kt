@@ -139,9 +139,9 @@ class Books {
     suspend fun updateBook(book: Book) = dbQuery {
         BooksTable.update ({ BooksTable.id eq book.id  }) {
             // TODO: Copy the book information into the table row.
+            it[title] = book.title
             it[author] = book.author
-            it[title] = book.author
-            it[completed] = book.sentToKindle
+            it[completed] = book.completed
             it[sentToKindle] = book.sentToKindle
         }
     }
