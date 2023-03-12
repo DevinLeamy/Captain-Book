@@ -14,7 +14,7 @@ import "./Library.css"
 import "./BookContainer.css"
 import "./BookFilterOption.css"
 import { Button, Grid } from "@mui/material"
-import { BookFilter, BookFilterBuilder } from "../../utils/BookFilter"
+import { BookFilter } from "../../utils/BookFilter"
 import { Book } from "../../types/Book"
 
 type LibraryComponentProps = {
@@ -26,38 +26,27 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
     const { books, updateBook } = useLibrary()
     const { focused, focusedBook, onFocusBook, onFocusNext, onFocusPrevious, onFocusStop } =
         useLibraryBookFocus(books)
-    const [bookFilter, setBookFilter] = useState<BookFilter>(BookFilter.allowAllFilter())
-    const [activeFilter, setActiveFilter] = useState<string>("")
+    const [bookFilter, setBookFilter] = useState<BookFilter>(
+        BookFilter.allowAllFilter()
+            .addFilter("read", (book) => book.completed)
+            .addFilter("unread", (book) => !book.completed)
+            .addFilter("kindle", (book) => book.sentToKindle)
+    )
 
     const onSubmitSearch = (queryString: string) => {}
     let filteredBooks = bookFilter.filterBooks(books)
 
     const updateActiveFilter = (newFilter: string) => {
-        if (newFilter === activeFilter) {
-            newFilter = ""
+        let filter = BookFilter.allowAllFilter()
+            .addFilter("read", (book) => book.completed)
+            .addFilter("unread", (book) => !book.completed)
+            .addFilter("kindle", (book) => book.sentToKindle)
+        if (!bookFilter.enabledFilter(newFilter)) {
+            // Enable the new filter.
+            filter.toggleFilter(newFilter)
         }
 
-        switch (newFilter) {
-            case "read": {
-                setBookFilter(new BookFilterBuilder().readBooks().build())
-                break
-            }
-            case "unread": {
-                setBookFilter(new BookFilterBuilder().unreadBooks().build())
-                break
-            }
-            case "kindle": {
-                setBookFilter(new BookFilterBuilder().sentToKindleBooks().build())
-                break
-            }
-            default: {
-                setActiveFilter("")
-                setBookFilter(BookFilter.allowAllFilter())
-                return
-            }
-        }
-
-        setActiveFilter(newFilter)
+        setBookFilter(filter)
     }
 
     return (
@@ -99,7 +88,7 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                         <Grid item xs={3}>
                             <div className="book-filters-container">
                                 <BookFilterOption
-                                    active={activeFilter === "read"}
+                                    active={bookFilter.enabledFilter("read")}
                                     icon={<VisibilityIcon />}
                                     onClick={() => updateActiveFilter("read")}
                                 >
@@ -107,13 +96,13 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                                 </BookFilterOption>
                                 <BookFilterOption
                                     icon={<VisibilityOffIcon />}
-                                    active={activeFilter === "unread"}
+                                    active={bookFilter.enabledFilter("unread")}
                                     onClick={() => updateActiveFilter("unread")}
                                 >
                                     Unread
                                 </BookFilterOption>
                                 <BookFilterOption
-                                    active={activeFilter === "kindle"}
+                                    active={bookFilter.enabledFilter("kindle")}
                                     icon={<SendIcon />}
                                     onClick={() => updateActiveFilter("kindle")}
                                 >
@@ -137,13 +126,13 @@ const BookContainer: React.FC<BookContainerProps> = ({ children }) => {
 }
 
 type BookFilterOptionProps = {
-    icon: ReactNode
+    active: Boolean
     children: ReactNode
-    active: boolean
+    icon: ReactNode
     onClick: () => void
 }
 
-const BookFilterOption: React.FC<BookFilterOptionProps> = ({ icon, children, active, onClick }) => {
+const BookFilterOption: React.FC<BookFilterOptionProps> = ({ active, children, icon, onClick }) => {
     return (
         <div className="book-filter-option-container">
             <Button
