@@ -2,7 +2,7 @@ import React, { ReactNode, useState } from "react"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import { BookCategory, BookFormat } from "../../types/Book"
-import { BookTableRow } from "./BookTableRow/BookTableRow"
+import { LibgenBookTableRow } from "./LibgenBookTableRow/LibgenBookTableRow"
 import { BookDisplay } from "./BookDisplay/BookDisplay"
 import { SearchBar } from "../SearchBar/SearchBar"
 
@@ -97,7 +97,7 @@ export const SearchPage = () => {
                     </div>
                     <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
                         {searchResults.map((book) => (
-                            <BookTableRow key={book.md5} book={book} />
+                            <LibgenBookTableRow key={book.md5} book={book} />
                         ))}
                     </BookDisplay>
                 </>

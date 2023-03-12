@@ -10,7 +10,7 @@ import { NouvelleAPI } from "../../../api/api"
 import { useAuth } from "../../../hooks/useAuth"
 import { LoadingContainer } from "../../Common"
 
-import "./BookTableRow.css"
+import "./LibgenBookTableRow.css"
 import { useAsyncAction } from "../../../hooks/useAsyncAction"
 
 type BookTableRowProps = {
@@ -39,7 +39,7 @@ const sendToKindle = async (book: LibgenBook) => {
     }
 }
 
-export const BookTableRow = ({ book }: BookTableRowProps) => {
+export const LibgenBookTableRow = ({ book }: BookTableRowProps) => {
     const { token } = useAuth()
     const [onDownload, downloadStatus] = useAsyncAction(async () => downloadBook(book))
     const [onSendToKindle, sendToKindleStatus] = useAsyncAction(async () => sendToKindle(book))
