@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material"
+import { Button, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material"
 import ClearIcon from "@mui/icons-material/Clear"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
@@ -13,6 +13,7 @@ import { NouvelleAPI } from "../../api/api"
 
 type BookDetailsDisplayT = {
     book: Book
+    onUpdateBook: (updatedBook: Book) => void
     onFocusNext: () => void
     onFocusPrevious: () => void
     onFocusStop: () => void
@@ -24,6 +25,7 @@ type BookDetailsDisplayT = {
  */
 const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
     book,
+    onUpdateBook,
     onFocusNext,
     onFocusPrevious,
     onFocusStop,
@@ -31,6 +33,21 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
     const { token } = useAuth()
     let kindleEmail = "devinleamy@gmail.com"
     // let kindleEmail = "the420kindle@kindle.com"
+
+    const onToggleSentToKindle = async () => {
+        let success = await NouvelleAPI.toggleBookSentToKindle(book.id, token!)
+        if (success) {
+            book.sentToKindle = !book.sentToKindle
+            onUpdateBook(book)
+        }
+    }
+    const onToggleCompleted = async () => {
+        let success = await NouvelleAPI.toggleBookCompleted(book.id, token!)
+        if (success) {
+            book.completed = !book.completed
+            onUpdateBook(book)
+        }
+    }
 
     const onSendToKindle = async () => {
         let success = await NouvelleAPI.sendLibraryBookToKindle(kindleEmail, book, token!)
@@ -61,8 +78,26 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
                                 </Button>
                             </a>
                         </div>
-                        <h3>{`Read: ${book.completed}`}</h3>
-                        <h3>{`Sent to kindle: ${book.sentToKindle}`}</h3>
+                        <FormGroup>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={book.completed}
+                                        onClick={onToggleCompleted}
+                                    />
+                                }
+                                label="Read"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={book.sentToKindle}
+                                        onClick={onToggleSentToKindle}
+                                    />
+                                }
+                                label="Sent to Kindle"
+                            />
+                        </FormGroup>
                     </Grid>
                     <Grid item xs={6}>
                         <div className="book-details-book-title">{`${book.title}`}</div>

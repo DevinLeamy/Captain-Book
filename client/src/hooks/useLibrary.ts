@@ -6,6 +6,7 @@ import { Book } from "../types/Book"
 
 type useLibraryT = {
     books: Book[]
+    updateBook: (updatedBook: Book, pushChanges: boolean) => void
 }
 
 const useLibrary = (): useLibraryT => {
@@ -24,14 +25,28 @@ const useLibrary = (): useLibraryT => {
         })()
     }, [authenticated])
 
+    const updateBook = (updatedBook: Book, pushChanges: boolean) => {
+        setBooks(
+            books.map((book) => {
+                if (book.id == updatedBook.id) {
+                    return updatedBook
+                } else {
+                    return book
+                }
+            })
+        )
+    }
+
     if (!authenticated) {
         return {
             books: [],
+            updateBook,
         }
     }
 
     return {
         books,
+        updateBook,
     }
 }
 

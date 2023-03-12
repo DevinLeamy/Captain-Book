@@ -15,6 +15,7 @@ import "./BookContainer.css"
 import "./BookFilterOption.css"
 import { Button, Grid } from "@mui/material"
 import { BookFilter, BookFilterBuilder } from "../../utils/BookFilter"
+import { Book } from "../../types/Book"
 
 type LibraryComponentProps = {
     unauthenticated: ReactNode
@@ -22,15 +23,42 @@ type LibraryComponentProps = {
 
 export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthenticated }) => {
     const { authenticated } = useAuth()
-    const { books } = useLibrary()
+    const { books, updateBook } = useLibrary()
     const { focused, focusedBook, onFocusBook, onFocusNext, onFocusPrevious, onFocusStop } =
         useLibraryBookFocus(books)
     const [bookFilter, setBookFilter] = useState<BookFilter>(BookFilter.allowAllFilter())
     const [activeFilter, setActiveFilter] = useState<string>("")
 
     const onSubmitSearch = (queryString: string) => {}
-
     let filteredBooks = bookFilter.filterBooks(books)
+
+    const updateActiveFilter = (newFilter: string) => {
+        if (newFilter === activeFilter) {
+            newFilter = ""
+        }
+
+        switch (newFilter) {
+            case "read": {
+                setBookFilter(new BookFilterBuilder().readBooks().build())
+                break
+            }
+            case "unread": {
+                setBookFilter(new BookFilterBuilder().unreadBooks().build())
+                break
+            }
+            case "kindle": {
+                setBookFilter(new BookFilterBuilder().sentToKindleBooks().build())
+                break
+            }
+            default: {
+                setActiveFilter("")
+                setBookFilter(BookFilter.allowAllFilter())
+                return
+            }
+        }
+
+        setActiveFilter(newFilter)
+    }
 
     return (
         <div className="library-container">
@@ -39,6 +67,7 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                 <>
                     {focused && (
                         <BookDetailsDisplay
+                            onUpdateBook={(book: Book) => updateBook(book, false)}
                             book={focusedBook!}
                             onFocusNext={onFocusNext}
                             onFocusPrevious={onFocusPrevious}
@@ -72,32 +101,21 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
                                 <BookFilterOption
                                     active={activeFilter === "read"}
                                     icon={<VisibilityIcon />}
-                                    onClick={() => {
-                                        setBookFilter(new BookFilterBuilder().readBooks().build())
-                                        setActiveFilter(activeFilter === "read" ? "" : "read")
-                                    }}
+                                    onClick={() => updateActiveFilter("read")}
                                 >
                                     Read
                                 </BookFilterOption>
                                 <BookFilterOption
                                     icon={<VisibilityOffIcon />}
                                     active={activeFilter === "unread"}
-                                    onClick={() => {
-                                        setBookFilter(new BookFilterBuilder().unreadBooks().build())
-                                        setActiveFilter(activeFilter === "unread" ? "" : "unread")
-                                    }}
+                                    onClick={() => updateActiveFilter("unread")}
                                 >
                                     Unread
                                 </BookFilterOption>
                                 <BookFilterOption
                                     active={activeFilter === "kindle"}
                                     icon={<SendIcon />}
-                                    onClick={() => {
-                                        setBookFilter(
-                                            new BookFilterBuilder().sentToKindleBooks().build()
-                                        )
-                                        setActiveFilter(activeFilter === "kindle" ? "" : "kindle")
-                                    }}
+                                    onClick={() => updateActiveFilter("kindle")}
                                 >
                                     Sent to Kindle
                                 </BookFilterOption>
