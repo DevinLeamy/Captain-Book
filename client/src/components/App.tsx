@@ -2,8 +2,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-import { Main } from "./Main/Main"
-import { Navbar } from "./navbar/Navbar"
+import { SearchPage } from "./SearchPage/SearchPage"
+import { Navbar } from "./Navbar/Navbar"
 import { LibraryComponent } from "./Library/Library"
 import { AuthContextProvider } from "../auth/AuthContext"
 
@@ -25,8 +25,8 @@ const App = () => {
                         <Navbar />
                         <div className="page-container">
                             <Routes>
-                                <Route path="/" element={<Main />} />
-                                <Route path="/search" element={<Main />} />
+                                <Route path="/" element={<SearchPage />} />
+                                <Route path="/search" element={<SearchPage />} />
                                 <Route
                                     path="/library"
                                     element={

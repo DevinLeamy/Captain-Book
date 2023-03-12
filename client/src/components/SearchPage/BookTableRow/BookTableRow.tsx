@@ -5,13 +5,13 @@ import CircularProgress from "@mui/material/CircularProgress"
 import SendIcon from "@mui/icons-material/Send"
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd"
 
-import { LibgenBook } from "../../types/Book"
-import { NouvelleAPI } from "../../api/api"
-import { useAuth } from "../../hooks/useAuth"
-import { LoadingContainer } from "../Common"
+import { LibgenBook } from "../../../types/Book"
+import { NouvelleAPI } from "../../../api/api"
+import { useAuth } from "../../../hooks/useAuth"
+import { LoadingContainer } from "../../Common"
 
 import "./BookTableRow.css"
-import { useAsyncAction } from "../../hooks/useAsyncAction"
+import { useAsyncAction } from "../../../hooks/useAsyncAction"
 
 type BookTableRowProps = {
     book: LibgenBook

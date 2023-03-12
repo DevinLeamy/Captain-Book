@@ -2,16 +2,16 @@ import React, { ReactNode, useState } from "react"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import { BookCategory, BookFormat } from "../../types/Book"
-import { BookTableRow } from "../BookTableRow/BookTableRow"
-import { BookDisplay } from "../BookDisplay/BookDisplay"
+import { BookTableRow } from "./BookTableRow/BookTableRow"
+import { BookDisplay } from "./BookDisplay/BookDisplay"
 import { SearchBar } from "../SearchBar/SearchBar"
 
 import { useSearch } from "../../hooks/useSearch"
 import { useAuth } from "../../hooks/useAuth"
 
-import "./Main.css"
+import "./SearchPage.css"
 
-export const Main = () => {
+export const SearchPage = () => {
     const { authenticated } = useAuth()
     const { searchResults, search, searchStatus } = useSearch()
     const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
