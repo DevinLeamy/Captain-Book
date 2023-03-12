@@ -5,7 +5,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import server.db.DatabaseFactory.dbQuery
 
 data class User(val id: Int, val email: String, val kindleEmail: String?, val books: List<Book>)
@@ -60,12 +59,5 @@ class Users {
         UsersTable
             .select { UsersTable.email eq email }
             .map(::resultRowToUser).singleOrNull()
-    }
-
-    /**
-     * Fetch all users.
-     */
-    private suspend fun allUsers(): List<User> = dbQuery {
-        LibgenBooksTable.selectAll().map(::resultRowToUser)
     }
 }

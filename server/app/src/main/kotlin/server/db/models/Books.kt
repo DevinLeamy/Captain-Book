@@ -3,13 +3,11 @@ package server.db.models
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import server.db.DatabaseFactory.dbQuery
 import server.db.S3
 import server.libgen.BookCategory
+import server.libgen.LibgenBook
 
 @Serializable
 data class Book(
@@ -26,15 +24,26 @@ data class Book(
     var coverurl: String,
     val bookFileUrl: String,
     val category: BookCategory = BookCategory.NON_FICTION,
-    var sendToKindle: Boolean = false,
+    var sentToKindle: Boolean = false,
+    var completed: Boolean = false
 )
 
 object BooksTable : IntIdTable() {
     val sentToKindle = bool("send_to_kindle")
+    val completed = bool("completed")
+    val title = varchar("title", 2000)
+    val author = varchar("author", 1000)
     val coverImageKey = varchar("cover_image_key", 200)
     val bookFileKey = varchar("book_file_key", 200)
     val userId = reference("user_id", UsersTable)
-    val libgenBookId = reference("libgen_book_id", LibgenBooksTable)
+    val filesize = varchar("filesize", 100)
+    val year = varchar("year", 14)
+    val language = varchar("language", 150)
+    val pages = varchar("pages", 100)
+    val publisher = varchar("publisher", 400)
+    val edition = varchar("edition", 60)
+    val extension = varchar("extension", 50)
+    var category = varchar("category", 100)
 }
 
 val books = Books()
@@ -43,13 +52,23 @@ class Books {
     /**
      * Create a book.
      */
-    suspend fun addBook(userId: Int, libgenBookId: Int, coverImageKey: String, bookFileKey: String, sentToKindle: Boolean): Result<Int> = dbQuery {
+    suspend fun addBook(userId: Int, libgenBook: LibgenBook, coverImageKey: String, bookFileKey: String, sentToKindle: Boolean): Result<Int> = dbQuery {
         val insertBookStatement = BooksTable.insert {
             it[BooksTable.userId] = userId
             it[BooksTable.coverImageKey] = coverImageKey
             it[BooksTable.bookFileKey] = bookFileKey
-            it[BooksTable.libgenBookId] = libgenBookId
             it[BooksTable.sentToKindle] = sentToKindle
+            it[title] = libgenBook.title
+            it[author] = libgenBook.author
+            it[filesize] = libgenBook.filesize
+            it[year] = libgenBook.year
+            it[language] = libgenBook.language
+            it[pages] = libgenBook.pages
+            it[publisher] = libgenBook.publisher
+            it[edition] = libgenBook.edition
+            it[extension] = libgenBook.extension
+            it[category] = libgenBook.category.toString()
+            it[completed] = false
         }
         insertBookStatement.resultedValues?.let {
             return@dbQuery Result.success(it[0][BooksTable.id].value)
@@ -78,23 +97,24 @@ class Books {
      * Convert a ResultRow to a Book.
      */
     private suspend fun resultRowToBook(row: ResultRow): Book {
-        val libgenBook = libgenBooks.bookWithId(row[BooksTable.libgenBookId].value)!!
         return Book(
             id = row[BooksTable.id].value,
-            title = libgenBook.title,
-            author = libgenBook.author,
-            filesize = libgenBook.filesize,
-            year = libgenBook.year,
-            language = libgenBook.language,
-            pages = libgenBook.pages,
-            publisher = libgenBook.publisher,
-            edition = libgenBook.edition,
-            extension = libgenBook.extension,
+            title = row[BooksTable.title],
+            author = row[BooksTable.author],
+            filesize = row[BooksTable.filesize],
+            year = row[BooksTable.year],
+            language = row[BooksTable.language],
+            pages = row[BooksTable.pages],
+            publisher = row[BooksTable.publisher],
+            edition = row[BooksTable.edition],
+            extension = row[BooksTable.extension],
             // Fetch a pre-signed (secure) urls, from S3.
             coverurl = S3.generatePresignedUrl(row[BooksTable.coverImageKey]),
             bookFileUrl = S3.generatePresignedUrl(row[BooksTable.bookFileKey]),
-            category = libgenBook.category,
-            sendToKindle = row[BooksTable.sentToKindle]
+            category = if (row[BooksTable.category] == BookCategory.NON_FICTION.toString()) BookCategory.NON_FICTION
+                       else BookCategory.FICTION,
+            sentToKindle = row[BooksTable.sentToKindle],
+            completed = row[BooksTable.completed]
         )
     }
 
@@ -109,6 +129,22 @@ class Books {
             .select { BooksTable.id eq bookId }
             .map { resultRow -> resultRow[BooksTable.bookFileKey] }
             .firstOrNull()
+    }
+
+    /**
+     * Update a given book.
+     *
+     * Note: Does not update all fields.
+     */
+    suspend fun updateBook(book: Book) = dbQuery {
+        BooksTable.update ({ BooksTable.id eq book.id  }) {
+            // TODO: Copy the book information into the table row.
+            it[author] = book.author
+            it[title] = book.author
+            it[completed] = book.sentToKindle
+            it[sentToKindle] = book.sentToKindle
+        }
+
     }
 
     /**

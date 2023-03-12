@@ -90,12 +90,8 @@ fun Route.libraryRouting() {
                         "Failed to find user.",
                         status = HttpStatusCode.InternalServerError
                     )
-                    val libgenBookId = libgenBooks.addBook(libgenBook).getOrNull() ?: return@post call.respondText(
-                        "Failed to add book to database.",
-                        status = HttpStatusCode.InternalServerError
-                    )
 
-                    books.addBook(user.id, libgenBookId, s3ImageKey, s3BookKey, sentToKindle = false).getOrNull()
+                    books.addBook(user.id, libgenBook, s3ImageKey, s3BookKey, sentToKindle = false).getOrNull()
                         ?: return@post call.respondText(
                             "Failed to add book to database.",
                             status = HttpStatusCode.InternalServerError

@@ -8,7 +8,6 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import server.db.models.BooksTable
-import server.db.models.LibgenBooksTable
 import server.db.models.UsersTable
 
 object DatabaseFactory {
@@ -25,7 +24,6 @@ object DatabaseFactory {
              * Create tables if they don't exist.
              */
             SchemaUtils.create(UsersTable)
-            SchemaUtils.create(LibgenBooksTable)
             SchemaUtils.create(BooksTable)
         }
     }
