@@ -37,8 +37,8 @@ interface Book {
     coverurl: string
     bookFileUrl: string
     category: BookCategory
-    sentToKindle: Boolean
-    completed: Boolean
+    sentToKindle: boolean
+    completed: boolean
 }
 
 export type { LibgenBook, Book, BookFormat, BookCategory }

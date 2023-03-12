@@ -51,6 +51,7 @@ fun Route.libraryRouting() {
                     val status = kindle.sendToKindle(kindleEmail, bookFile)
 
                     if (status.isSuccess) {
+                        books.updateSentToKindle(book, sentToKindle = true)
                         call.respondText("Sent book to kindle")
                     } else {
                         call.respondText(
@@ -104,6 +105,30 @@ fun Route.libraryRouting() {
                     val user = principle.user
 
                     call.respond(user.books)
+                }
+                get("/{bookId}/toggleSentToKindle") {
+                    val bookId = call.parameters["bookId"] ?: return@get call.respondText(
+                        "Invalid request",
+                        status = HttpStatusCode.BadRequest
+                    )
+                    val book = books.bookWithId(bookId.toInt()) ?: return@get call.respondText(
+                        "Invalid book id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                    books.updateSentToKindle(book, !book.sentToKindle)
+                    call.respondText("Updated kindle status")
+                }
+                get("/{bookId}/toggleCompleted") {
+                    val bookId = call.parameters["bookId"] ?: return@get call.respondText(
+                        "Invalid request",
+                        status = HttpStatusCode.BadRequest
+                    )
+                    val book = books.bookWithId(bookId.toInt()) ?: return@get call.respondText(
+                        "Invalid book id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                    books.updateCompleted(book, !book.completed)
+                    call.respondText("Updated kindle status")
                 }
             }
         }

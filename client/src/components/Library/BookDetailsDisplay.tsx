@@ -61,6 +61,8 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
                                 </Button>
                             </a>
                         </div>
+                        <h3>{`Read: ${book.completed}`}</h3>
+                        <h3>{`Sent to kindle: ${book.sentToKindle}`}</h3>
                     </Grid>
                     <Grid item xs={6}>
                         <div className="book-details-book-title">{`${book.title}`}</div>

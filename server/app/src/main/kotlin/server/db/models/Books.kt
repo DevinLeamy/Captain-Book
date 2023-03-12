@@ -144,7 +144,22 @@ class Books {
             it[completed] = book.sentToKindle
             it[sentToKindle] = book.sentToKindle
         }
+    }
 
+    /**
+     * Update sent to kindle status.
+     */
+    suspend fun updateSentToKindle(book: Book, sentToKindle: Boolean): Int {
+        book.sentToKindle = sentToKindle
+        return updateBook(book)
+    }
+
+    /**
+     * Update book read status.
+     */
+    suspend fun updateCompleted(book: Book, completed: Boolean): Int {
+        book.completed = completed
+        return updateBook(book)
     }
 
     /**

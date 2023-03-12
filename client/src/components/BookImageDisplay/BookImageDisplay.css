@@ -1,5 +1,5 @@
 .book-image-display-container {
-    --book-width: 200px;
+    --book-width: 175px;
     --book-image-height: calc(var(--book-width) * 1.5);
     --book-info-height: 50px;
     width: var(--book-width);
