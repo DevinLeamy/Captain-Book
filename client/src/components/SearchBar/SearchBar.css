@@ -1,0 +1,7 @@
+.search-bar-container {
+    width: 100%;
+}
+
+.search-bar-container fieldset {
+    border-radius: 0 !important;
+}

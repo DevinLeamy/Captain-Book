@@ -8,5 +8,6 @@
 
 .book-filters-container {
     border-left: 1px solid var(--grey);
+    border-right: 1px solid var(--grey);
     height: 100%;
 }
