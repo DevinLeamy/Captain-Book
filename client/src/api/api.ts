@@ -1,19 +1,19 @@
-import { Book } from "../types/Book"
+import { Book, LibgenBook } from "../types/Book"
 import { LibgenSearch } from "../types/LibgenSearch"
 import { request } from "./utils"
 
 const API_URL = "http://127.0.0.1:8080"
 
 interface INouvelleAPI {
-    search: (search: LibgenSearch) => Promise<Book[]>
-    download: (book: Book) => Promise<File | undefined>
-    sendToKindle: (kindleEmail: string, book: Book) => Promise<boolean>
+    search: (search: LibgenSearch) => Promise<LibgenBook[]>
+    downloadLibgenBook: (book: LibgenBook) => Promise<File | undefined>
+    sendLibgenBookToKindle: (kindleEmail: string, book: LibgenBook) => Promise<boolean>
     sendLibraryBookToKindle: (kindleEmail: string, book: Book, token: string) => Promise<boolean>
-    addToLibrary: (book: Book, token: string) => Promise<boolean>
-    getBooks: (token: string) => Promise<Book[]>
+    addToLibrary: (book: LibgenBook, token: string) => Promise<boolean>
+    getLibraryBooks: (token: string) => Promise<Book[]>
 }
 
-const search = async (search: LibgenSearch): Promise<Book[]> => {
+const search = async (search: LibgenSearch): Promise<LibgenBook[]> => {
     let response = await fetch(`${API_URL}/libgen/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -21,10 +21,10 @@ const search = async (search: LibgenSearch): Promise<Book[]> => {
     })
     response = await response.json()
 
-    return response as unknown as Book[]
+    return response as unknown as LibgenBook[]
 }
 
-const download = async (book: Book): Promise<File | undefined> => {
+const downloadLibgenBook = async (book: LibgenBook): Promise<File | undefined> => {
     const response = await fetch(`${API_URL}/libgen/download`, {
         method: "POST",
         headers: {
@@ -45,7 +45,7 @@ const download = async (book: Book): Promise<File | undefined> => {
  * Sends {book} to {kindleEmail}.
  * Returns whether the request succeeded.
  */
-const sendToKindle = async (kindleEmail: string, book: Book): Promise<boolean> => {
+const sendLibgenBookToKindle = async (kindleEmail: string, book: LibgenBook): Promise<boolean> => {
     const request = await fetch(`${API_URL}/kindle/send`, {
         method: "POST",
         headers: {
@@ -80,9 +80,9 @@ const sendLibraryBookToKindle = async (
 }
 
 /**
- * Add a book to the user's collection.
+ * Add a libgen book to the user's collection.
  */
-const addToLibrary = async (book: Book, token: string): Promise<boolean> => {
+const addToLibrary = async (book: LibgenBook, token: string): Promise<boolean> => {
     let response = await request("/library/books/add", {
         body: book,
         accessToken: token,
@@ -93,7 +93,7 @@ const addToLibrary = async (book: Book, token: string): Promise<boolean> => {
 /**
  * Fetch books from a user's collection.
  */
-const getBooks = async (token: string): Promise<Book[]> => {
+const getLibraryBooks = async (token: string): Promise<Book[]> => {
     let response = await request("/library/books/", {
         accessToken: token,
     })
@@ -108,9 +108,9 @@ const getBooks = async (token: string): Promise<Book[]> => {
 
 export const NouvelleAPI: INouvelleAPI = {
     search,
-    download,
-    sendToKindle,
+    downloadLibgenBook,
+    sendLibgenBookToKindle,
     sendLibraryBookToKindle,
     addToLibrary,
-    getBooks,
+    getLibraryBooks,
 }

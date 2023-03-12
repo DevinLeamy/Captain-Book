@@ -19,7 +19,7 @@ const useLibrary = (): useLibraryT => {
 
         // prettier-ignore
         (async () => {
-            let books = await NouvelleAPI.getBooks(token!!)
+            let books = await NouvelleAPI.getLibraryBooks(token!!)
             setBooks(books)
         })()
     }, [authenticated])

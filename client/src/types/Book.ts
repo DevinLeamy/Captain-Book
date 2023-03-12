@@ -1,7 +1,10 @@
 type BookFormat = "epub" | "pdf" | "mobi"
 type BookCategory = "non-fiction" | "fiction"
 
-interface Book {
+/**
+ * A book fetched from Libgen.
+ */
+interface LibgenBook {
     id: string
     title: string
     author: string
@@ -17,4 +20,25 @@ interface Book {
     category: BookCategory
 }
 
-export type { Book, BookFormat, BookCategory }
+/**
+ * A book fetch from a user library.
+ */
+interface Book {
+    id: number
+    title: string
+    author: string
+    filesize: string
+    year: string
+    language: string
+    pages: string
+    publisher: string
+    edition: string
+    extension: string
+    coverurl: string
+    bookFileUrl: string
+    category: BookCategory
+    sentToKindle: Boolean
+    completed: Boolean
+}
+
+export type { LibgenBook, Book, BookFormat, BookCategory }

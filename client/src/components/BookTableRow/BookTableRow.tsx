@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 import SendIcon from "@mui/icons-material/Send"
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd"
 
-import { Book } from "../../types/Book"
+import { LibgenBook } from "../../types/Book"
 import { NouvelleAPI } from "../../api/api"
 import { useAuth } from "../../hooks/useAuth"
 import { LoadingContainer } from "../Common"
@@ -14,14 +14,14 @@ import "./BookTableRow.css"
 import { useAsyncAction } from "../../hooks/useAsyncAction"
 
 type BookTableRowProps = {
-    book: Book
+    book: LibgenBook
 }
 
 // TODO: This should be part of the User data.
 const KINDLE_EMAIL = "devinleamy@gmail.com"
 // const KINDLE_EMAIL = "the420kindle@kindle.com"
-const downloadBook = async (book: Book) => {
-    let bookFile = await NouvelleAPI.download(book)
+const downloadBook = async (book: LibgenBook) => {
+    let bookFile = await NouvelleAPI.downloadLibgenBook(book)
     if (bookFile === undefined) {
         alert("Failed to download.")
         return
@@ -29,8 +29,8 @@ const downloadBook = async (book: Book) => {
     downloadLocally(bookFile, `${book.title}.${book.extension.toLowerCase()}`)
 }
 
-const sendToKindle = async (book: Book) => {
-    let success = await NouvelleAPI.sendToKindle(KINDLE_EMAIL, book)
+const sendToKindle = async (book: LibgenBook) => {
+    let success = await NouvelleAPI.sendLibgenBookToKindle(KINDLE_EMAIL, book)
     if (success) {
         alert("Send to kindle.")
         console.log("Sent to kindle.")
