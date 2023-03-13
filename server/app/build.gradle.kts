@@ -36,6 +36,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     // Logback
     implementation("ch.qos.logback:logback-classic:1.4.5")
     // Sendgrid

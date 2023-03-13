@@ -12,6 +12,7 @@ import server.db.S3
 import server.db.models.users
 import server.firebase.FirebaseAdmin
 import server.libgen.LibgenBook
+import server.plugins.configureExceptions
 import server.plugins.configureRouting
 import server.plugins.configureSerialization
 import server.utils.downloadImageByUrl
@@ -57,6 +58,9 @@ fun Application.module() {
 
     // Create routes.
     configureRouting()
+    // Handle serializations.
     configureSerialization()
+    // Handle exceptions.
+    configureExceptions()
 }
 
