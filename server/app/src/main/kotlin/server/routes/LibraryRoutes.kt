@@ -27,15 +27,7 @@ fun Route.libraryRouting() {
         route("/library") {
             route("/books") {
                 post("/send") {
-                    val request: BooksSendPost
-                    try {
-                        request = call.receive()
-                    } catch (error: Throwable) {
-                        return@post call.respondText(
-                            "Failed to parse request parameters.",
-                            status = HttpStatusCode.BadRequest
-                        )
-                    }
+                    val request = call.receive<BooksSendPost>()
                     val book = request.book
                     val kindleEmail = request.kindleEmail
 

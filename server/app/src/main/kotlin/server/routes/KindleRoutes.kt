@@ -21,15 +21,8 @@ data class SendToKindleRequest(
 fun Route.kindleRouting() {
     route("/kindle") {
         post("/send") {
-            val request: SendToKindleRequest
-            try {
-                request = call.receive()
-            } catch (e: Throwable) {
-                return@post call.respondText(
-                    "Could not parse send to kindle request",
-                    status = HttpStatusCode.BadRequest
-                )
-            }
+            val request = call.receive<SendToKindleRequest>()
+
             val kindleEmail = request.kindleEmail
             val book = request.book
             if (!store.downloadedBooks.containsKey(book.md5)) {
