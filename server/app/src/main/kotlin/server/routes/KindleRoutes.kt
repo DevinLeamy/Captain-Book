@@ -1,6 +1,5 @@
 package server.routes
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -9,6 +8,7 @@ import kotlinx.serialization.Serializable
 import server.kindle.KindleAPI
 import server.libgen.LibgenBook
 import server.store
+import server.utils.BlanketException
 
 val kindle = KindleAPI()
 
@@ -30,15 +30,11 @@ fun Route.kindleRouting() {
             }
             val bookFile = store.downloadedBooks[book.md5]!!
             val status = kindle.sendToKindle(kindleEmail, bookFile)
-
-            if (status.isSuccess) {
-                call.respondText("Sent book to kindle")
-            } else {
-                call.respondText(
-                    "Failed to send book",
-                    status = HttpStatusCode.InternalServerError
-                )
+            if (status.isFailure) {
+                throw BlanketException("Failed to send book")
             }
+
+            call.respondText("Sent book to kindle")
         }
     }
 }
