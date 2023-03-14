@@ -12,9 +12,7 @@ import server.db.S3
 import server.db.models.users
 import server.firebase.FirebaseAdmin
 import server.libgen.LibgenBook
-import server.plugins.configureExceptions
-import server.plugins.configureRouting
-import server.plugins.configureSerialization
+import server.plugins.*
 import server.utils.downloadImageByUrl
 import java.io.File
 
@@ -33,34 +31,12 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    // Initialize Firebase Admin SDK.
-    FirebaseAdmin.init()
-    // Initialize database.
-    DatabaseFactory.init()
-    // Very permissive CORS.
-    install(CORS) {
-        anyHost()
-        allowHeader("Content-Type")
-        allowHeader("Authorization")
-    }
-    install(Authentication) {
-        firebase {
-            validate {token: FirebaseToken ->
-                val user = users.userWithEmail(token.email) ?: users.addUser(token.email, kindleEmail = null)
-                if (user == null) {
-                    println("[APPLICATION] Failed to create new user.")
-                    return@validate null
-                }
-                UserPrincipal(token.uid, user)
-            }
-        }
-    }
-
-    // Create routes.
+    configureFirebase()
+    configureDatabase()
+    configureCORS()
+    configureAuthentication()
     configureRouting()
-    // Handle serializations.
     configureSerialization()
-    // Handle exceptions.
     configureExceptions()
 }
 
