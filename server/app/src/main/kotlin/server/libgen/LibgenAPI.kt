@@ -50,8 +50,8 @@ class LibgenAPI {
     private val mirror = Mirror()
 
     /**
-     * Basically, libgen has a json API for it's non-fiction books but it doesn't have one, or at least no one that's easily
-     * accessible, for it's non-fiction books.
+     * Basically, libgen has a json API for its non-fiction books, but it doesn't have one, or at least no one that's easily
+     * accessible, for its non-fiction books.
      */
     private fun buildQueryUrl(search: LibgenSearch): Optional<String> {
         return when (search.query.category) {
