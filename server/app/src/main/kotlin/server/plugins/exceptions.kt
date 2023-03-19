@@ -26,7 +26,6 @@ fun Application.configureExceptions() {
                 is BlanketException -> call.respond(throwable.message, HttpStatusCode.InternalServerError)
                 is DatabaseException -> call.respond(throwable.message, HttpStatusCode.InternalServerError)
                 is BadRequestException -> {
-                    println("HERE")
                     call.respond("Failed to parse request body", HttpStatusCode.BadRequest)
                 }
                 else -> {

@@ -84,11 +84,14 @@ class LibgenAPI {
     suspend fun search(search: LibgenSearch): List<LibgenBook> {
         val queryUrl = buildQueryUrl(search).getOrNull() ?: return listOf()
         return if (search.query.category == BookCategory.FICTION) {
+            val urls = (1..5).map { page -> "$queryUrl&page=$page"}
             // Use the web scraper.
-            webScraper
-                .scrapeSearchResults(queryUrl)
-                .filter { search.filter.passes(it) }
-                .toList()
+            urls.map { url ->
+                webScraper
+                    .scrapeSearchResults(url)
+                    .filter { search.filter.passes(it) }
+            }
+            .flatten()
         } else {
             // Use the JSON api.
             val response: HttpResponse = client.request(queryUrl) {
