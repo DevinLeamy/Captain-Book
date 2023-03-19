@@ -5,7 +5,7 @@ import { request } from "./utils"
 const API_URL = "http://127.0.0.1:8080"
 
 interface INouvelleAPI {
-    search: (search: LibgenSearch) => Promise<LibgenBook[]>
+    search: (search: LibgenSearch) => Promise<LibgenBook[] | undefined>
     downloadLibgenBook: (book: LibgenBook) => Promise<File | undefined>
     sendLibgenBookToKindle: (kindleEmail: string, book: LibgenBook) => Promise<boolean>
     sendLibraryBookToKindle: (kindleEmail: string, book: Book, token: string) => Promise<boolean>
@@ -15,14 +15,18 @@ interface INouvelleAPI {
     toggleBookCompleted: (bookId: number, token: string) => Promise<boolean>
 }
 
-const search = async (search: LibgenSearch): Promise<LibgenBook[]> => {
+const search = async (search: LibgenSearch): Promise<LibgenBook[] | undefined> => {
     let response = await fetch(`${API_URL}/libgen/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(search),
     })
-    response = await response.json()
 
+    if (!response.ok) {
+        return undefined
+    }
+
+    response = await response.json()
     return response as unknown as LibgenBook[]
 }
 

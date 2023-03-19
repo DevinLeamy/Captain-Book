@@ -15,18 +15,18 @@ function useSearch(): useSearchType {
     const [searchResults, setSearchResults] = useState<LibgenBook[]>([])
     const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle")
 
-    const onSearch = (searchQuery: LibgenSearch) => {
+    const onSearch = async (searchQuery: LibgenSearch) => {
         setSearchStatus("waiting")
-        NouvelleAPI.search(searchQuery)
-            .then((books) => {
-                setSearchResults(books)
-                setSearchStatus("finished")
-            })
-            .catch((error) => {
-                setSearchStatus("failed")
-                setSearchResults([])
-                console.log("[MAIN] Failed to search")
-            })
+        let books = await NouvelleAPI.search(searchQuery)
+        if (books === undefined) {
+            setSearchStatus("failed")
+            setSearchResults([])
+            console.log("[MAIN] Failed to search")
+            return
+        }
+
+        setSearchResults(books)
+        setSearchStatus("finished")
     }
     return {
         searchResults,
