@@ -35,26 +35,31 @@ class LibgenWebScraper {
         val html = fetchHtml(searchUrl).getOrNull() ?: return emptyList()
         val rawRowContents: MutableList<List<DocElement>> = mutableListOf()
 
-        htmlDocument(html) {
-            tbody {
-               tr {
-                   findAll {
-                       for (element in this) {
-                           element.td {
-                               findAll {
-                                   val elements = this
-                                   val author = elements[0]
-                                   val titleAndLink = elements[2]
-                                   val language = elements[3]
-                                   val format = elements[4]
+        try {
+            htmlDocument(html) {
+                tbody {
+                    tr {
+                        findAll {
+                            for (element in this) {
+                                element.td {
+                                    findAll {
+                                        val elements = this
+                                        val author = elements[0]
+                                        val titleAndLink = elements[2]
+                                        val language = elements[3]
+                                        val format = elements[4]
 
-                                   rawRowContents.add(listOf(author, titleAndLink, language, format))
-                               }
-                           }
-                       }
-                   }
-               }
+                                        rawRowContents.add(listOf(author, titleAndLink, language, format))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
+        } catch (e: Throwable) {
+            // No results found.
+            return emptyList()
         }
 
         val bookDownloadLinks = mutableListOf<String>()
