@@ -1,5 +1,5 @@
-import { User as FirebaseUser } from "firebase/auth";
+import { User as FirebaseUser } from "firebase/auth"
 
-type User = FirebaseUser;
+type User = FirebaseUser
 
-export type { User };
+export type { User }

@@ -1,7 +1,5 @@
 import { ReactNode } from "react"
 
-import "./LoadingContainer.css"
-
 type LoadingContainerProps = {
     loading: boolean
     beforeLoaded: ReactNode
@@ -10,7 +8,7 @@ type LoadingContainerProps = {
 
 const LoadingContainer: React.FC<LoadingContainerProps> = ({ loading, beforeLoaded, children }) => {
     return (
-        <div className="loading-container-container">
+        <div className="w-full h-full">
             {loading && beforeLoaded}
             {!loading && children}
         </div>

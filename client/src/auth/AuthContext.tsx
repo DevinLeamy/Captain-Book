@@ -1,9 +1,9 @@
 import { createContext, ReactNode } from "react"
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 
-import { User } from "../types/User"
-import { auth } from "../firebase/firebase"
-import { usePersistentState } from "../hooks/usePersistentState"
+import { User } from "types/User"
+import { auth } from "firebase/firebase"
+import { usePersistentState } from "hooks/usePersistentState"
 
 type AuthContextT = {
     authenticated: boolean

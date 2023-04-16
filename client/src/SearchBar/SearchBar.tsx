@@ -1,8 +1,6 @@
 import TextField from "@mui/material/TextField"
 import { useState } from "react"
 
-import "./SearchBar.css"
-
 interface SearchBarProps {
     onSubmit: (queryString: string) => void
 }
@@ -11,7 +9,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
     const [queryString, setQueryString] = useState<string>("")
 
     return (
-        <div className="search-bar-container">
+        <div className="w-full">
             <TextField
                 fullWidth
                 id="search-input"

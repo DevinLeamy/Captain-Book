@@ -3,6 +3,7 @@ import { NouvelleAPI } from "../api/api"
 
 import { useAuth } from "../hooks/useAuth"
 import { Book } from "../types/Book"
+import { usePersistentState } from "./usePersistentState"
 
 type useLibraryT = {
     books: Book[]
@@ -11,7 +12,7 @@ type useLibraryT = {
 
 const useLibrary = (): useLibraryT => {
     const { authenticated, token } = useAuth()
-    const [books, setBooks] = useState<Book[]>([])
+    const [books, setBooks] = usePersistentState<Book[]>("library-books", [])
 
     useEffect(() => {
         if (!authenticated) {
