@@ -5,37 +5,44 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Search from "pages/search/SearchPage"
 import Library from "pages/library/LibraryPage"
 import Account from "pages/account/AccountPage"
-import { Navbar } from "Navbar/Navbar"
-import { AuthContextProvider } from "auth/AuthContext"
+import Home from "pages/home/HomePage"
+import { Navbar } from "components/Navbar/Navbar"
 
 import "./App.css"
-
-const darkTheme = createTheme({
-    palette: {
-        mode: "dark",
-    },
-})
+import { useAuth } from "hooks/useAuth"
 
 const App = () => {
+    const { authenticated } = useAuth()
+
     return (
         <Router>
-            <AuthContextProvider>
-                <ThemeProvider theme={darkTheme}>
-                    <CssBaseline />
-                    <div className="main-container">
-                        <Navbar />
-                        <div className="page-container">
-                            <Routes>
-                                <Route path="/" element={<Search />} />
-                                <Route path="/search" element={<Search />} />
-                                <Route path="/account" element={<Account />} />
-                                <Route path="/library" element={<Library />} />
-                                <Route path="/*" element={<div>404 Page not found.</div>} />
-                            </Routes>
-                        </div>
+            <ThemeProvider
+                theme={createTheme({
+                    palette: {
+                        mode: "dark",
+                    },
+                })}
+            >
+                <CssBaseline />
+                <div className="main-container">
+                    <Navbar />
+                    <div className="page-container">
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/search" element={authenticated ? <Search /> : <Home />} />
+                            <Route
+                                path="/account"
+                                element={authenticated ? <Account /> : <Home />}
+                            />
+                            <Route
+                                path="/library"
+                                element={authenticated ? <Library /> : <Home />}
+                            />
+                            <Route path="/*" element={<div>404 Page not found.</div>} />
+                        </Routes>
                     </div>
-                </ThemeProvider>
-            </AuthContextProvider>
+                </div>
+            </ThemeProvider>
         </Router>
     )
 }

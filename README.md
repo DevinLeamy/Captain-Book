@@ -21,3 +21,4 @@
         matched the title.
 -   [ ] It's not hosted!
 -   [ ] Users cannot set their _"send-to-kindle"_ email, which is a must!
+-   [ ] Allow user to remove books from library

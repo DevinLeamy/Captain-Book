@@ -4,15 +4,13 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 import { BookCategory, BookFormat } from "../../types/Book"
 import { LibgenBookTableRow } from "./LibgenBookTableRow/LibgenBookTableRow"
 import { BookDisplay } from "./BookDisplay/BookDisplay"
-import { SearchBar } from "../../SearchBar/SearchBar"
+import { SearchBar } from "../../components/SearchBar/SearchBar"
 
 import { useSearch } from "../../hooks/useSearch"
-import { useAuth } from "../../hooks/useAuth"
 
 import "./SearchPage.css"
 
 const SearchPage = () => {
-    const { authenticated } = useAuth()
     const { searchResults, search, searchStatus } = useSearch()
     const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
     const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction")
@@ -65,43 +63,38 @@ const SearchPage = () => {
 
     return (
         <div className="main-c-container">
-            {!authenticated && <h3>Login to search.</h3>}
-            {authenticated && (
-                <>
-                    <SearchBar onSubmit={onSubmitSearch} />
-                    <div className="search-options-container">
-                        <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
-                            <ToggleButton size="small" value="epub">
-                                EPUB
-                            </ToggleButton>
-                            <ToggleButton size="small" value="mobi">
-                                MOBI
-                            </ToggleButton>
-                            <ToggleButton size="small" value="pdf">
-                                PDF
-                            </ToggleButton>
-                        </ToggleButtonGroup>
+            <SearchBar onSubmit={onSubmitSearch} />
+            <div className="search-options-container">
+                <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
+                    <ToggleButton size="small" value="epub">
+                        EPUB
+                    </ToggleButton>
+                    <ToggleButton size="small" value="mobi">
+                        MOBI
+                    </ToggleButton>
+                    <ToggleButton size="small" value="pdf">
+                        PDF
+                    </ToggleButton>
+                </ToggleButtonGroup>
 
-                        <ToggleButtonGroup
-                            value={searchCategory}
-                            exclusive
-                            onChange={onSearchCategoryChange}
-                        >
-                            <ToggleButton size="small" value="fiction">
-                                Fiction
-                            </ToggleButton>
-                            <ToggleButton size="small" value="non-fiction">
-                                Non-fiction
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </div>
-                    <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
-                        {searchResults.map((book) => (
-                            <LibgenBookTableRow key={book.md5} book={book} />
-                        ))}
-                    </BookDisplay>
-                </>
-            )}
+                <ToggleButtonGroup
+                    value={searchCategory}
+                    exclusive
+                    onChange={onSearchCategoryChange}
+                >
+                    <ToggleButton size="small" value="fiction">
+                        Fiction
+                    </ToggleButton>
+                    <ToggleButton size="small" value="non-fiction">
+                        Non-fiction
+                    </ToggleButton>
+                </ToggleButtonGroup>
+            </div>
+            <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
+                {searchResults.map((book) => (
+                    <LibgenBookTableRow key={book.md5} book={book} />
+                ))}
+            </BookDisplay>
         </div>
     )
 }

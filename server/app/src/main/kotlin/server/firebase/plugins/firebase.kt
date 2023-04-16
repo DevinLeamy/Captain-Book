@@ -1,4 +1,4 @@
-package server.plugins
+package server.firebase.plugins
 
 import io.ktor.server.application.*
 import server.firebase.FirebaseAdmin

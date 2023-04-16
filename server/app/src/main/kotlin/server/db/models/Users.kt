@@ -5,9 +5,10 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import server.db.DatabaseFactory.dbQuery
 
-data class User(val id: Int, val email: String, val kindleEmail: String?, val books: List<Book>)
+data class User(val id: Int, val email: String, var kindleEmail: String?, val books: List<Book>)
 
 object UsersTable: IntIdTable() {
     val email = varchar("email", 200)
@@ -41,6 +42,19 @@ class Users {
         }
         // Fetch the newly created user.
         return userWithEmail(email)
+    }
+
+    /**
+     *
+     * Update a user.
+     * Note: userId and email are immutable and will not change.
+     */
+    suspend fun updateUser(user: User) {
+        dbQuery {
+            UsersTable.update({ UsersTable.id eq user.id }) {
+                it[kindleEmail] = user.kindleEmail
+            }
+        }
     }
 
     /**

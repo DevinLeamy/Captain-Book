@@ -11,8 +11,8 @@ import server.db.DatabaseFactory
 import server.db.S3
 import server.db.models.users
 import server.firebase.FirebaseAdmin
+import server.firebase.plugins.*
 import server.libgen.LibgenBook
-import server.plugins.*
 import server.utils.downloadImageByUrl
 import java.io.File
 

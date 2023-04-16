@@ -1,4 +1,4 @@
-package server.plugins
+package server.firebase.plugins
 
 import com.google.firebase.auth.FirebaseToken
 import io.ktor.server.application.*

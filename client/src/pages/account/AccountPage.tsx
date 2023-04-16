@@ -1,17 +1,21 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { Button, TextField } from "@mui/material"
 import { useAuth } from "hooks/useAuth"
 import { useUserData } from "hooks/useUserData"
 
 const AccountPage = () => {
-    const { kindleEmail } = useUserData()
+    const { kindleEmail, updateKindleEmail } = useUserData()
     const { onLogout } = useAuth()
     const [displayedKindleEmail, setDisplayedKindleEmail] = useState<string>(kindleEmail ?? "")
     const updatedEmail = displayedKindleEmail != (kindleEmail ?? "")
 
-    const updateKindleEmail = () => {
-        // TODO
+    useEffect(() => {
+        setDisplayedKindleEmail(kindleEmail ?? "")
+    }, [kindleEmail])
+
+    const onUpdateKindleEmail = () => {
+        updateKindleEmail(displayedKindleEmail)
     }
 
     const revertChanges = () => {
@@ -20,18 +24,20 @@ const AccountPage = () => {
 
     return (
         <div className="w-full">
-            <div className="text-2xl font-bold mb-8">Account</div>
-            <TextField
-                label="Send to kindle email"
-                value={displayedKindleEmail}
-                onChange={(e) => setDisplayedKindleEmail(e.target.value)}
-                size="small"
-                className="font-bold"
-            />
+            <div className="mt-10">
+                <TextField
+                    label="Send to kindle email"
+                    value={displayedKindleEmail}
+                    onChange={(e) => setDisplayedKindleEmail(e.target.value)}
+                    size="small"
+                    fullWidth
+                    className="font-bold"
+                />
+            </div>
             <div className="mt-8">
                 {updatedEmail && (
                     <>
-                        <Button variant="contained" onClick={updateKindleEmail}>
+                        <Button variant="contained" onClick={onUpdateKindleEmail}>
                             Update Information
                         </Button>
                         <Button variant="contained" onClick={revertChanges}>

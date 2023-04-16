@@ -1,20 +1,37 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
-import { useAuth } from "../hooks/useAuth"
+import { useAuth } from "../../hooks/useAuth"
 import { useLocation } from "react-router-dom"
 
 import "./Navbar.css"
 
 const Navbar = () => {
     const { authenticated, onLogin } = useAuth()
+    const navigate = useNavigate()
     const location = useLocation().pathname
     return (
         <div className="navbar-container">
-            <div className="navbar-left">📚 Nouvelle</div>
+            <div
+                className="navbar-left container mx-auto hover:cursor-pointer"
+                onClick={() => {
+                    navigate("/")
+                }}
+            >
+                <div className="flex items-center">
+                    <img
+                        className="h-12 p-2 w-auto mr-2"
+                        src={require("assets/images/captainbook2.jpeg")}
+                        alt="Captain Book Logo"
+                    />
+                    <h1 className="text-2xl font-serif italic font-semibold text-white">
+                        Captain Book
+                    </h1>
+                </div>
+            </div>
             <div className="navbar-right">
                 {!authenticated && (
-                    <div className="navbar-link" onClick={onLogin}>
+                    <div className="navbar-link hover:cursor-pointer" onClick={onLogin}>
                         Login
                     </div>
                 )}

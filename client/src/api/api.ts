@@ -13,6 +13,8 @@ interface INouvelleAPI {
     getLibraryBooks: (token: string) => Promise<Book[]>
     toggleBookSentToKindle: (bookId: number, token: string) => Promise<boolean>
     toggleBookCompleted: (bookId: number, token: string) => Promise<boolean>
+    getKindleEmail: (token: string) => Promise<string | undefined>
+    updateKindleEmail: (kindleEmail: string, token: string) => Promise<boolean>
 }
 
 const search = async (search: LibgenSearch): Promise<LibgenBook[] | undefined> => {
@@ -132,6 +134,34 @@ const toggleBookCompleted = async (bookId: number, token: string): Promise<boole
     return response.ok
 }
 
+/**
+ * Get the user's kindle email.
+ */
+const getKindleEmail = async (token: string): Promise<string | undefined> => {
+    let response = await request(`/kindle/email`, {
+        accessToken: token,
+    })
+    if (!response.ok) {
+        return undefined
+    }
+
+    let json = await response.json()
+    return json.kindleEmail
+}
+
+/**
+ * Update the user's kindle email.
+ */
+const updateKindleEmail = async (kindleEmail: string, token: string): Promise<boolean> => {
+    let response = await request("/kindle/email", {
+        accessToken: token,
+        body: {
+            newKindleEmail: kindleEmail,
+        },
+    })
+    return response.ok
+}
+
 export const NouvelleAPI: INouvelleAPI = {
     search,
     downloadLibgenBook,
@@ -141,4 +171,6 @@ export const NouvelleAPI: INouvelleAPI = {
     getLibraryBooks,
     toggleBookSentToKindle,
     toggleBookCompleted,
+    getKindleEmail,
+    updateKindleEmail,
 }

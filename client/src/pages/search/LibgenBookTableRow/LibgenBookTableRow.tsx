@@ -8,7 +8,7 @@ import LibraryAddIcon from "@mui/icons-material/LibraryAdd"
 import { LibgenBook } from "types/Book"
 import { NouvelleAPI } from "api/api"
 import { useAuth } from "hooks/useAuth"
-import { LoadingContainer } from "common/LoadingContainer/LoadingContainer"
+import { LoadingContainer } from "components/LoadingContainer/LoadingContainer"
 
 import "./LibgenBookTableRow.css"
 import { useAsyncAction } from "../../../hooks/useAsyncAction"

@@ -1,8 +1,7 @@
 import React, { ReactNode, useState } from "react"
-import { useAuth } from "../../hooks/useAuth"
 import { useLibrary } from "../../hooks/useLibrary"
-import { SearchBar } from "../../SearchBar/SearchBar"
-import { BookImageDisplay } from "../../BookImageDisplay/BookImageDisplay"
+import { SearchBar } from "../../components/SearchBar/SearchBar"
+import { BookImageDisplay } from "../../components/BookImageDisplay/BookImageDisplay"
 import SendIcon from "@mui/icons-material/Send"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import VisibilityIcon from "@mui/icons-material/Visibility"
@@ -18,7 +17,6 @@ import { BookFilter } from "../../utils/BookFilter"
 import { Book } from "../../types/Book"
 
 const LibraryPage: React.FC = () => {
-    const { authenticated } = useAuth()
     const { books, updateBook } = useLibrary()
     const { focused, focusedBook, onFocusBook, onFocusNext, onFocusPrevious, onFocusStop } =
         useLibraryBookFocus(books)
@@ -47,68 +45,59 @@ const LibraryPage: React.FC = () => {
 
     return (
         <div className="library-container">
-            {!authenticated && <h3>Login to access your library.</h3>}
-            {authenticated && (
-                <>
-                    {focused && (
-                        <BookDetailsDisplay
-                            onUpdateBook={(book: Book) => updateBook(book, false)}
-                            book={focusedBook!}
-                            onFocusNext={onFocusNext}
-                            onFocusPrevious={onFocusPrevious}
-                            onFocusStop={onFocusStop}
-                        />
-                    )}
-                    <SearchBar onSubmit={onSubmitSearch} />
-                    <Grid
-                        style={{
-                            height: "100%",
-                        }}
-                        container
-                        spacing={4}
-                    >
-                        <Grid item xs={9}>
-                            {filteredBooks.length == 0 && <h3>No results</h3>}
-                            {filteredBooks.length > 0 && (
-                                <BookContainer>
-                                    {filteredBooks.map((book) => (
-                                        <BookImageDisplay
-                                            key={book.id}
-                                            book={book}
-                                            onClick={onFocusBook}
-                                        />
-                                    ))}
-                                </BookContainer>
-                            )}
-                        </Grid>
-                        <Grid item xs={3}>
-                            <div className="book-filters-container">
-                                <BookFilterOption
-                                    active={bookFilter.enabledFilter("read")}
-                                    icon={<VisibilityIcon />}
-                                    onClick={() => updateActiveFilter("read")}
-                                >
-                                    Read
-                                </BookFilterOption>
-                                <BookFilterOption
-                                    icon={<VisibilityOffIcon />}
-                                    active={bookFilter.enabledFilter("unread")}
-                                    onClick={() => updateActiveFilter("unread")}
-                                >
-                                    Unread
-                                </BookFilterOption>
-                                <BookFilterOption
-                                    active={bookFilter.enabledFilter("kindle")}
-                                    icon={<SendIcon />}
-                                    onClick={() => updateActiveFilter("kindle")}
-                                >
-                                    Sent to Kindle
-                                </BookFilterOption>
-                            </div>
-                        </Grid>
-                    </Grid>
-                </>
+            {focused && (
+                <BookDetailsDisplay
+                    onUpdateBook={(book: Book) => updateBook(book, false)}
+                    book={focusedBook!}
+                    onFocusNext={onFocusNext}
+                    onFocusPrevious={onFocusPrevious}
+                    onFocusStop={onFocusStop}
+                />
             )}
+            <SearchBar onSubmit={onSubmitSearch} />
+            <Grid
+                style={{
+                    height: "100%",
+                }}
+                container
+                spacing={4}
+            >
+                <Grid item xs={9}>
+                    {filteredBooks.length == 0 && <h3>No results</h3>}
+                    {filteredBooks.length > 0 && (
+                        <BookContainer>
+                            {filteredBooks.map((book) => (
+                                <BookImageDisplay key={book.id} book={book} onClick={onFocusBook} />
+                            ))}
+                        </BookContainer>
+                    )}
+                </Grid>
+                <Grid item xs={3}>
+                    <div className="book-filters-container">
+                        <BookFilterOption
+                            active={bookFilter.enabledFilter("read")}
+                            icon={<VisibilityIcon />}
+                            onClick={() => updateActiveFilter("read")}
+                        >
+                            Read
+                        </BookFilterOption>
+                        <BookFilterOption
+                            icon={<VisibilityOffIcon />}
+                            active={bookFilter.enabledFilter("unread")}
+                            onClick={() => updateActiveFilter("unread")}
+                        >
+                            Unread
+                        </BookFilterOption>
+                        <BookFilterOption
+                            active={bookFilter.enabledFilter("kindle")}
+                            icon={<SendIcon />}
+                            onClick={() => updateActiveFilter("kindle")}
+                        >
+                            Sent to Kindle
+                        </BookFilterOption>
+                    </div>
+                </Grid>
+            </Grid>
         </div>
     )
 }

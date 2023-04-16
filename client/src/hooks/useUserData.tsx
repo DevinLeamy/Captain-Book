@@ -1,5 +1,7 @@
 import { User } from "types/User"
 import { useAuth } from "./useAuth"
+import { useEffect, useState } from "react"
+import { NouvelleAPI } from "api/api"
 
 type useUserDataT = {
     user: User
@@ -12,15 +14,28 @@ type useUserDataT = {
  */
 const useUserData = (): useUserDataT => {
     const { user, token } = useAuth()
+    const [kindleEmail, setKindleEmail] = useState<string | undefined>(undefined)
+
+    useEffect(() => {
+        NouvelleAPI.getKindleEmail(token ?? "").then((email) => {
+            setKindleEmail(email)
+        })
+    }, [])
 
     const updateKindleEmail = async (newKindleEmail: string) => {
-        // TODO
+        let success = await NouvelleAPI.updateKindleEmail(newKindleEmail, token ?? "")
+        if (success) {
+            setKindleEmail(newKindleEmail)
+        } else {
+            alert("Failed to update kindle email")
+        }
     }
 
     return {
         user: user!,
         // kindleEmail: "the420kindle@kindle.com",
-        kindleEmail: "devinleamy@gmail.com",
+        // kindleEmail: "devinleamy@gmail.com",
+        kindleEmail,
         updateKindleEmail,
     }
 }

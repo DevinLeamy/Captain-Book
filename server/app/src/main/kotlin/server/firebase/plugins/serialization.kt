@@ -1,4 +1,4 @@
-package server.plugins
+package server.firebase.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
