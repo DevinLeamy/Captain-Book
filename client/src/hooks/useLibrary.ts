@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import { NouvelleAPI } from "../api/api"
 
-import { useAuth } from "../hooks/useAuth"
-import { Book } from "../types/Book"
+import { useAuth } from "hooks/useAuth"
+import { Book } from "types/Book"
 import { usePersistentState } from "./usePersistentState"
 
 type useLibraryT = {

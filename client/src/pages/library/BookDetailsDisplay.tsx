@@ -10,6 +10,7 @@ import { Book } from "../../types/Book"
 import "./BookDetailsDisplay.css"
 import { useAuth } from "../../hooks/useAuth"
 import { NouvelleAPI } from "../../api/api"
+import { useUserData } from "hooks/useUserData"
 
 type BookDetailsDisplayT = {
     book: Book
@@ -31,8 +32,7 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
     onFocusStop,
 }) => {
     const { token } = useAuth()
-    let kindleEmail = "devinleamy@gmail.com"
-    // let kindleEmail = "the420kindle@kindle.com"
+    const { kindleEmail } = useUserData()
 
     const onToggleSentToKindle = async () => {
         let success = await NouvelleAPI.toggleBookSentToKindle(book.id, token!)
@@ -50,6 +50,11 @@ const BookDetailsDisplay: React.FC<BookDetailsDisplayT> = ({
     }
 
     const onSendToKindle = async () => {
+        if (kindleEmail === undefined) {
+            alert("Please set your kindle email in the Account page.")
+            return
+        }
+
         let success = await NouvelleAPI.sendLibraryBookToKindle(kindleEmail, book, token!)
         alert(`Send to kindle: ${success}`)
     }
