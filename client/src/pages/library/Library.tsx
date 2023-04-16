@@ -1,8 +1,8 @@
 import React, { ReactNode, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import { useLibrary } from "../../hooks/useLibrary"
-import { SearchBar } from "../SearchBar/SearchBar"
-import { BookImageDisplay } from "../BookImageDisplay/BookImageDisplay"
+import { SearchBar } from "../../SearchBar/SearchBar"
+import { BookImageDisplay } from "../../BookImageDisplay/BookImageDisplay"
 import SendIcon from "@mui/icons-material/Send"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import VisibilityIcon from "@mui/icons-material/Visibility"
@@ -17,11 +17,7 @@ import { Button, Grid } from "@mui/material"
 import { BookFilter } from "../../utils/BookFilter"
 import { Book } from "../../types/Book"
 
-type LibraryComponentProps = {
-    unauthenticated: ReactNode
-}
-
-export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthenticated }) => {
+const LibraryPage: React.FC = () => {
     const { authenticated } = useAuth()
     const { books, updateBook } = useLibrary()
     const { focused, focusedBook, onFocusBook, onFocusNext, onFocusPrevious, onFocusStop } =
@@ -51,7 +47,7 @@ export const LibraryComponent: React.FC<LibraryComponentProps> = ({ unauthentica
 
     return (
         <div className="library-container">
-            {!authenticated && unauthenticated}
+            {!authenticated && <h3>Login to access your library.</h3>}
             {authenticated && (
                 <>
                     {focused && (
@@ -150,3 +146,5 @@ const BookFilterOption: React.FC<BookFilterOptionProps> = ({ active, children, i
         </div>
     )
 }
+
+export default LibraryPage

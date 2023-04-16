@@ -35,7 +35,8 @@
 }
 
 .selected-link {
-    border: 1px solid var(--white);
+    background-color: slategrey;
+    border: 1px solid rgba(0, 0, 0, 0);
 }
 
 .login-button:hover {

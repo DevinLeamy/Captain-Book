@@ -2,10 +2,10 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-import { SearchPage } from "./SearchPage/SearchPage"
-import { Navbar } from "./Navbar/Navbar"
-import { LibraryComponent } from "./Library/Library"
-import { AuthContextProvider } from "../auth/AuthContext"
+import Search from "pages/search/SearchPage"
+import { Navbar } from "Navbar/Navbar"
+import Library from "pages/library/Library"
+import { AuthContextProvider } from "auth/AuthContext"
 
 import "./App.css"
 
@@ -25,16 +25,11 @@ const App = () => {
                         <Navbar />
                         <div className="page-container">
                             <Routes>
-                                <Route path="/" element={<SearchPage />} />
-                                <Route path="/search" element={<SearchPage />} />
-                                <Route
-                                    path="/library"
-                                    element={
-                                        <LibraryComponent
-                                            unauthenticated={<h3>Login to access your library.</h3>}
-                                        />
-                                    }
-                                />
+                                <Route path="/" element={<Search />} />
+                                <Route path="/search" element={<Search />} />
+                                <Route path="/account" element={<Search />} />
+                                <Route path="/library" element={<Library />} />
+                                <Route path="/*" element={<div>404 Page not found.</div>} />
                             </Routes>
                         </div>
                     </div>

@@ -1,13 +1,13 @@
 import React from "react"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../../hooks/useAuth"
+import { useAuth } from "../hooks/useAuth"
 import { useLocation } from "react-router-dom"
 
 import "./Navbar.css"
 
 const Navbar = () => {
-    const { authenticated, onLogin, onLogout } = useAuth()
+    const { authenticated, onLogin } = useAuth()
     const location = useLocation().pathname
     return (
         <div className="navbar-container">
@@ -36,9 +36,14 @@ const Navbar = () => {
                         >
                             Search
                         </Link>
-                        <div className="navbar-link" onClick={onLogout}>
-                            Logout
-                        </div>
+                        <Link
+                            className={`navbar-link ${
+                                location === "/account" ? "selected-link" : ""
+                            }`}
+                            to={"./account"}
+                        >
+                            Account
+                        </Link>
                     </>
                 )}
             </div>

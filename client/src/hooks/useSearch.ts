@@ -3,6 +3,7 @@ import { useState } from "react"
 import { NouvelleAPI } from "../api/api"
 import { LibgenBook } from "../types/Book"
 import { LibgenSearch } from "../types/LibgenSearch"
+import { usePersistentState } from "./usePersistentState"
 
 type SearchStatus = "idle" | "finished" | "waiting" | "failed"
 type useSearchType = {
@@ -12,7 +13,7 @@ type useSearchType = {
 }
 
 function useSearch(): useSearchType {
-    const [searchResults, setSearchResults] = useState<LibgenBook[]>([])
+    const [searchResults, setSearchResults] = usePersistentState<LibgenBook[]>("search-results", [])
     const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle")
 
     const onSearch = async (searchQuery: LibgenSearch) => {

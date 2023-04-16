@@ -4,14 +4,14 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 import { BookCategory, BookFormat } from "../../types/Book"
 import { LibgenBookTableRow } from "./LibgenBookTableRow/LibgenBookTableRow"
 import { BookDisplay } from "./BookDisplay/BookDisplay"
-import { SearchBar } from "../SearchBar/SearchBar"
+import { SearchBar } from "../../SearchBar/SearchBar"
 
 import { useSearch } from "../../hooks/useSearch"
 import { useAuth } from "../../hooks/useAuth"
 
 import "./SearchPage.css"
 
-export const SearchPage = () => {
+const SearchPage = () => {
     const { authenticated } = useAuth()
     const { searchResults, search, searchStatus } = useSearch()
     const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
@@ -105,3 +105,5 @@ export const SearchPage = () => {
         </div>
     )
 }
+
+export default SearchPage
