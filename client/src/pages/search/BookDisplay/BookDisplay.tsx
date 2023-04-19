@@ -22,9 +22,9 @@ const BookDisplay = ({ before, after, children }: BookDisplayProps) => {
             {before !== null && before}
             {after !== null && after}
             {before === null && after === null && (
-                <table className="book-display-table">
+                <table className="table-head w-full h-full max-h-full">
                     <thead>
-                        <tr className="book-display-thead">
+                        <tr>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Year</th>

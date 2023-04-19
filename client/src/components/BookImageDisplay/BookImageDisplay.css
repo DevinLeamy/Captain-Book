@@ -1,7 +1,7 @@
 .book-image-display-container {
-    --book-width: 175px;
+    --book-width: 140px;
     --book-image-height: calc(var(--book-width) * 1.5);
-    --book-info-height: 50px;
+    --book-info-height: 40px;
     width: var(--book-width);
     height: calc(var(--book-image-height) + var(--book-info-height));
 }
@@ -16,6 +16,7 @@
 }
 
 .book-info-container {
+    font-size: 10px;
     width: 100%;
     height: var(--book-info-height);
     display: flex;

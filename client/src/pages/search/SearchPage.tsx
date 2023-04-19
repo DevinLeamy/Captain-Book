@@ -2,13 +2,11 @@ import React, { ReactNode, useState } from "react"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import { BookCategory, BookFormat } from "../../types/Book"
-import { LibgenBookTableRow } from "./LibgenBookTableRow/LibgenBookTableRow"
+import { LibgenBookTableRow } from "./LibgenBookTableRow"
 import { BookDisplay } from "./BookDisplay/BookDisplay"
 import { SearchBar } from "../../components/SearchBar/SearchBar"
 
 import { useSearch } from "../../hooks/useSearch"
-
-import "./SearchPage.css"
 
 const SearchPage = () => {
     const { searchResults, search, searchStatus } = useSearch()
@@ -62,9 +60,9 @@ const SearchPage = () => {
     }
 
     return (
-        <div className="main-c-container">
+        <div className="w-full h-full pt-7 box-border">
             <SearchBar onSubmit={onSubmitSearch} />
-            <div className="search-options-container">
+            <div className="flex gap-1 mt-1">
                 <ToggleButtonGroup value={searchFormats} onChange={onSearchFormatChange}>
                     <ToggleButton size="small" value="epub">
                         EPUB
@@ -91,9 +89,13 @@ const SearchPage = () => {
                 </ToggleButtonGroup>
             </div>
             <BookDisplay before={loadingDisplay()} after={loadedDisplay()}>
-                {searchResults.map((book) => (
-                    <LibgenBookTableRow key={book.md5} book={book} />
-                ))}
+                {searchResults
+                    .filter(
+                        (book) => searchFormats.indexOf(book.extension.toLocaleLowerCase()) !== -1
+                    )
+                    .map((book) => (
+                        <LibgenBookTableRow key={book.md5} book={book} />
+                    ))}
             </BookDisplay>
         </div>
     )

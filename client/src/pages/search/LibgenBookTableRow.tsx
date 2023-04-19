@@ -10,37 +10,16 @@ import { NouvelleAPI } from "api/api"
 import { useAuth } from "hooks/useAuth"
 import { LoadingContainer } from "components/LoadingContainer/LoadingContainer"
 
-import "./LibgenBookTableRow.css"
-import { useAsyncAction } from "../../../hooks/useAsyncAction"
+import { useAsyncAction } from "../../hooks/useAsyncAction"
+import { useUserData } from "hooks/useUserData"
 
 type BookTableRowProps = {
     book: LibgenBook
 }
 
-// TODO: This should be part of the User data.
-const KINDLE_EMAIL = "devinleamy@gmail.com"
-// const KINDLE_EMAIL = "the420kindle@kindle.com"
-const downloadBook = async (book: LibgenBook) => {
-    let bookFile = await NouvelleAPI.downloadLibgenBook(book)
-    if (bookFile === undefined) {
-        alert("Failed to download.")
-        return
-    }
-    downloadLocally(bookFile, `${book.title}.${book.extension.toLowerCase()}`)
-}
-
-const sendToKindle = async (book: LibgenBook) => {
-    let success = await NouvelleAPI.sendLibgenBookToKindle(KINDLE_EMAIL, book)
-    if (success) {
-        alert("Send to kindle.")
-        console.log("Sent to kindle.")
-    } else {
-        alert("Failed to send to the kindle.")
-    }
-}
-
 export const LibgenBookTableRow = ({ book }: BookTableRowProps) => {
     const { token } = useAuth()
+    const { kindleEmail } = useUserData()
     const [onDownload, downloadStatus] = useAsyncAction(async () => downloadBook(book))
     const [onSendToKindle, sendToKindleStatus] = useAsyncAction(async () => sendToKindle(book))
     const [onAddToLibrary, addToLibraryStatus] = useAsyncAction(async () => {
@@ -48,9 +27,40 @@ export const LibgenBookTableRow = ({ book }: BookTableRowProps) => {
         alert(`[BOOK] Add to library succeeded: ${success}`)
     })
 
+    const downloadBook = async (book: LibgenBook) => {
+        let bookFile = await NouvelleAPI.downloadLibgenBook(book)
+        if (bookFile === undefined) {
+            alert("Failed to download.")
+            return
+        }
+        downloadLocally(bookFile, `${book.title}.${book.extension.toLowerCase()}`)
+    }
+
+    const sendToKindle = async (book: LibgenBook) => {
+        if (kindleEmail === undefined) {
+            alert("Set your kindle email, on the Account page.")
+            return
+        }
+        let success = await NouvelleAPI.sendLibgenBookToKindle(kindleEmail, book)
+        if (success) {
+            alert("Send to kindle.")
+            console.log("Sent to kindle.")
+        } else {
+            alert("Failed to send to the kindle.")
+        }
+    }
+
+    const formatBookTitle = (title: string): string => {
+        if (title.length >= 35) {
+            return title.substring(0, 22) + "..."
+        } else {
+            return title
+        }
+    }
+
     return (
         <tr className="book-row">
-            <td>{book.title}</td>
+            <td>{formatBookTitle(book.title)}</td>
             <td>{book.author}</td>
             <td>{book.year}</td>
             <td>{book.extension.toUpperCase()}</td>

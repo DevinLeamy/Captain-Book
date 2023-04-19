@@ -111,7 +111,7 @@ const BookContainer: React.FC<BookContainerProps> = ({ children }) => {
 }
 
 type BookFilterOptionProps = {
-    active: Boolean
+    active: boolean
     children: ReactNode
     icon: ReactNode
     onClick: () => void
