@@ -59,7 +59,7 @@ export const LibgenBookTableRow = ({ book }: BookTableRowProps) => {
     }
 
     return (
-        <tr className="book-row">
+        <tr className="max-h-5">
             <td>{formatBookTitle(book.title)}</td>
             <td>{book.author}</td>
             <td>{book.year}</td>

@@ -11,6 +11,8 @@ type useUserDataT = {
 
 /**
  * Hook to get user data. Assumes the user has already been authenticated.
+ *
+ * TODO: This should be inside a context.
  */
 const useUserData = (): useUserDataT => {
     const { user, token } = useAuth()
@@ -20,7 +22,7 @@ const useUserData = (): useUserDataT => {
         NouvelleAPI.getKindleEmail(token ?? "").then((email) => {
             setKindleEmail(email)
         })
-    }, [])
+    }, [token])
 
     const updateKindleEmail = async (newKindleEmail: string) => {
         let success = await NouvelleAPI.updateKindleEmail(newKindleEmail, token ?? "")

@@ -7,10 +7,14 @@ import { BookDisplay } from "./BookDisplay/BookDisplay"
 import { SearchBar } from "../../components/SearchBar/SearchBar"
 
 import { useSearch } from "../../hooks/useSearch"
+import { usePersistentState } from "hooks/usePersistentState"
 
 const SearchPage = () => {
     const { searchResults, search, searchStatus } = useSearch()
-    const [searchFormats, setSearchFormats] = useState<string[]>(["epub", "mobi", "pdf"])
+    const [searchFormats, setSearchFormats] = usePersistentState<string[]>(
+        "search-formats-filter",
+        ["epub", "mobi", "pdf"]
+    )
     const [searchCategory, setSearchCategory] = useState<BookCategory>("fiction")
 
     const onSubmitSearch = (queryString: string) => {
