@@ -1,4 +1,3 @@
-import React from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { useAuth } from "../../hooks/useAuth"
@@ -24,7 +23,7 @@ const Navbar = () => {
                         src={require("assets/images/captainbook2.jpeg")}
                         alt="Captain Book Logo"
                     />
-                    <h1 className="text-2xl font-serif italic font-semibold text-white">
+                    <h1 className="text-2xl font-serif italic font-semibold text-white hover:underline">
                         Captain Book
                     </h1>
                 </div>
