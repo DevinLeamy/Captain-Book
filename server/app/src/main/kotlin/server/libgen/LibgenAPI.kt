@@ -60,7 +60,7 @@ class LibgenAPI {
                     QueryBuilder(mirror.nonFictionSearch)
                         .with("req", search.query.text)
                         .with("lg_topic", "libgen")
-                        .with("res", "50")
+                        .with("res", "30")
                         .with("open", "0")
                         .with("view", "simple")
                         .with("phrase", "1")
@@ -84,14 +84,17 @@ class LibgenAPI {
     suspend fun search(search: LibgenSearch): List<LibgenBook> {
         val queryUrl = buildQueryUrl(search).getOrNull() ?: return listOf()
         return if (search.query.category == BookCategory.FICTION) {
-            val urls = (1..5).map { page -> "$queryUrl&page=$page"}
             // Use the web scraper.
-            urls.map { url ->
-                webScraper
-                    .scrapeSearchResults(url)
-                    .filter { search.filter.passes(it) }
+            val urls = (1..5).map { page -> "$queryUrl&page=$page"}
+            val results = mutableListOf<LibgenBook>()
+            for (url in urls) {
+                val books = webScraper.scrapeSearchResults(url)
+                results.addAll(books.filter { search.filter.passes(it) })
+                if (results.size > 10) {
+                    break
+                }
             }
-            .flatten()
+            results
         } else {
             // Use the JSON api.
             val response: HttpResponse = client.request(queryUrl) {

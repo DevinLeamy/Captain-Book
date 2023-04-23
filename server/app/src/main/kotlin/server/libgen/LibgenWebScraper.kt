@@ -57,35 +57,34 @@ class LibgenWebScraper {
                     }
                 }
             }
-        } catch (e: Throwable) {
-            // No results found.
-            return emptyList()
-        }
 
-        val bookDownloadLinks = mutableListOf<String>()
-        for (row in rawRowContents) {
-            val titleAndLink = row[1]
-            titleAndLink.a {
-                findFirst {
-                    val a = this
-                    if (a.eachHref.isNotEmpty()) {
-                        bookDownloadLinks.add(a.eachHref[0])
+            val bookDownloadLinks = mutableListOf<String>()
+            for (row in rawRowContents) {
+                val titleAndLink = row[1]
+                titleAndLink.a {
+                    findFirst {
+                        val a = this
+                        if (a.eachHref.isNotEmpty()) {
+                            bookDownloadLinks.add(a.eachHref[0])
+                        }
                     }
                 }
             }
-        }
-
-        return if (false) {
-            // Async (WILL RESULT IN TEMPORARY IP BAN)
-            sendAsyncRequests(bookDownloadLinks) { scapeBookPage("https://libgen.is${it}") }
-                .filter { it.isPresent }
-                .map { it.get() }
-        } else {
-           // Sync (safe)
-           bookDownloadLinks
-               .map { scapeBookPage("https://libgen.is${it}") }
-               .filter { it.isPresent }
-               .map { it.get() }
+            return if (false) {
+                // Async (WILL RESULT IN TEMPORARY IP BAN)
+                sendAsyncRequests(bookDownloadLinks) { scapeBookPage("https://libgen.is${it}") }
+                    .filter { it.isPresent }
+                    .map { it.get() }
+            } else {
+                // Sync (safe)
+                bookDownloadLinks
+                    .map { scapeBookPage("https://libgen.is${it}") }
+                    .filter { it.isPresent }
+                    .map { it.get() }
+            }
+        } catch (e: Throwable) {
+            // No results found.
+            return emptyList()
         }
     }
 

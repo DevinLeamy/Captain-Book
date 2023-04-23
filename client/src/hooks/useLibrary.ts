@@ -22,7 +22,7 @@ const useLibrary = (): useLibraryT => {
         (async () => {
             let books = await NouvelleAPI.getLibraryBooks(token!!)
             // Sort by year added, in descending order.
-            books.sort((b1, b2) => b2.dateAdded.getFullYear() - b1.dateAdded.getFullYear())
+            books.sort((b1, b2) => b2.dateAdded > b1.dateAdded ? 1 : -1)
             setBooks(books)
         })()
     }, [authenticated])
