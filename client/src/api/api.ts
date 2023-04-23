@@ -1,4 +1,5 @@
-import { Book, LibgenBook } from "../types/Book"
+import { SDate } from "utils/SDate"
+import { Book, LibgenBook, parseBookJSON } from "../types/Book"
 import { LibgenSearch } from "../types/LibgenSearch"
 import { request } from "./utils"
 
@@ -110,8 +111,9 @@ const getLibraryBooks = async (token: string): Promise<Book[]> => {
         return []
     }
 
-    let books = await response.json()
-    return books as Book[]
+    let books = (await response.json()) as Book[]
+    books = books.map(parseBookJSON)
+    return books
 }
 
 /**

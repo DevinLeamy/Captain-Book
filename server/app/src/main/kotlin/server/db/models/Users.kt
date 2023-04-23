@@ -45,7 +45,6 @@ class Users {
     }
 
     /**
-     *
      * Update a user.
      * Note: userId and email are immutable and will not change.
      */

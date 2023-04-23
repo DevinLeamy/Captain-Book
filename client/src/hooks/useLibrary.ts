@@ -3,7 +3,6 @@ import { NouvelleAPI } from "../api/api"
 
 import { useAuth } from "hooks/useAuth"
 import { Book } from "types/Book"
-import { usePersistentState } from "./usePersistentState"
 
 type useLibraryT = {
     books: Book[]
@@ -12,7 +11,7 @@ type useLibraryT = {
 
 const useLibrary = (): useLibraryT => {
     const { authenticated, token } = useAuth()
-    const [books, setBooks] = usePersistentState<Book[]>("library-books", [])
+    const [books, setBooks] = useState<Book[]>([])
 
     useEffect(() => {
         if (!authenticated) {
@@ -22,6 +21,8 @@ const useLibrary = (): useLibraryT => {
         // prettier-ignore
         (async () => {
             let books = await NouvelleAPI.getLibraryBooks(token!!)
+            // Sort by year added, in descending order.
+            books.sort((b1, b2) => b2.dateAdded.getFullYear() - b1.dateAdded.getFullYear())
             setBooks(books)
         })()
     }, [authenticated])

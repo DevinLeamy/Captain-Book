@@ -4,10 +4,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.javatime.CurrentDate
+import org.jetbrains.exposed.sql.javatime.date
 import server.db.DatabaseFactory.dbQuery
 import server.db.S3
 import server.libgen.BookCategory
 import server.libgen.LibgenBook
+import java.time.LocalDate
 
 @Serializable
 data class Book(
@@ -23,9 +26,11 @@ data class Book(
     val extension: String,
     var coverurl: String,
     val bookFileUrl: String,
+    @Serializable(with = server.utils.LocalDateSerializer::class)
+    val dateAdded: LocalDate,
     val category: BookCategory = BookCategory.NON_FICTION,
     var sentToKindle: Boolean = false,
-    var completed: Boolean = false
+    var completed: Boolean = false,
 )
 
 object BooksTable : IntIdTable() {
@@ -44,6 +49,7 @@ object BooksTable : IntIdTable() {
     val edition = varchar("edition", 60)
     val extension = varchar("extension", 50)
     var category = varchar("category", 100)
+    var dateAdded = date("date_added").defaultExpression(CurrentDate)
 }
 
 val books = Books()
@@ -114,7 +120,8 @@ class Books {
             category = if (row[BooksTable.category] == BookCategory.NON_FICTION.toString()) BookCategory.NON_FICTION
                        else BookCategory.FICTION,
             sentToKindle = row[BooksTable.sentToKindle],
-            completed = row[BooksTable.completed]
+            completed = row[BooksTable.completed],
+            dateAdded = row[BooksTable.dateAdded]
         )
     }
 

@@ -8,7 +8,15 @@ import io.ktor.util.cio.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 suspend fun <T, R> sendAsyncRequests(requests: List<T>, map: suspend (T) -> R): List<R> = coroutineScope {
     val deferred = requests.map { async { map(it) } }.toList()
@@ -33,6 +41,22 @@ suspend fun downloadImageByUrl(url: String): File {
     response.bodyAsChannel().copyAndClose(file.writeChannel())
 
     return file
+}
+
+/**
+ * Serializer for LocalDate.
+ */
+object LocalDateSerializer : KSerializer<LocalDate> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: LocalDate) {
+        val result = value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        encoder.encodeString(result)
+    }
+
+    override fun deserialize(decoder: Decoder): LocalDate {
+        return LocalDate.parse(decoder.decodeString())
+    }
 }
 
 val extensionToMimeType = mapOf(

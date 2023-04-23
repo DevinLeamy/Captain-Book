@@ -1,3 +1,5 @@
+import { SDate } from "utils/SDate"
+
 type BookFormat = "epub" | "pdf" | "mobi"
 type BookCategory = "non-fiction" | "fiction"
 
@@ -39,6 +41,15 @@ interface Book {
     category: BookCategory
     sentToKindle: boolean
     completed: boolean
+    dateAdded: SDate
 }
 
+const parseBookJSON = (book: Book): Book => {
+    return {
+        ...book,
+        dateAdded: SDate.fromJSON(book.dateAdded as unknown as string),
+    }
+}
+
+export { parseBookJSON }
 export type { LibgenBook, Book, BookFormat, BookCategory }

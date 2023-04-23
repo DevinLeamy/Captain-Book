@@ -37,6 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+
     // Logback
     implementation("ch.qos.logback:logback-classic:1.4.5")
     // Sendgrid
@@ -48,6 +49,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     // HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
     // PostgreSQL
