@@ -9,3 +9,4 @@
 -   `Ktor`: async http server + http client
 -   `Skrape{it}`: web scraping
 -   `docker-compose`: deploying postgres
+-   `nginx`: web server
