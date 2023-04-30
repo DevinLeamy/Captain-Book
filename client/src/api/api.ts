@@ -1,12 +1,7 @@
 import { Book, LibgenBook, parseBookJSON } from "../types/Book"
 import { LibgenSearch } from "../types/LibgenSearch"
 import { request } from "./utils"
-
-/**
- * Set API url for development and production environments.
- */
-const API_URL =
-    process.env.NODE_ENV === "development" ? "http://127.0.0.1:8080" : "http://api.captainbook.ca"
+import { API_URL } from "./config"
 
 interface INouvelleAPI {
     search: (search: LibgenSearch) => Promise<LibgenBook[] | undefined>
