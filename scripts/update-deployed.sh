@@ -1,3 +1,3 @@
 cd /home/ymael/Desktop/Github/Nouvelle/client
-yarn run build
+yarn build --production
 sudo cp -r ./build/* /var/www/nouvelle
