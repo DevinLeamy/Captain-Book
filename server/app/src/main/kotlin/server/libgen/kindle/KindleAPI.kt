@@ -45,7 +45,7 @@ class KindleAPI {
      * See: https://stackoverflow.com/questions/38599079/sendgrid-emailing-api-send-email-attachment
      */
     fun sendToKindle(email: String, book: File): Result<Unit> {
-        val from = Email("captainbook.kindlegmail.com")
+        val from = Email("captainbook.kindle@gmail.com")
         val to = Email(email)
         val subject = "Book"
         val attachments = Attachments()
