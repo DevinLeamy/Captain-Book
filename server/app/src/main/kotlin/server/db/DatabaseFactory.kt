@@ -11,7 +11,6 @@ import server.db.models.BooksTable
 import server.db.models.UsersTable
 
 object DatabaseFactory {
-    // TODO: Add these values to app config - they obviously shouldn't be plain text.
     private const val DB_PORT = 5432
     private const val DB_NAME = "nouvelle-db"
     private const val DB_USER = "admin"

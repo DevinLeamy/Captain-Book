@@ -4,9 +4,8 @@ services:
     db:
         image: postgres
         restart: always
-        # Uncomment when we want persistent storage
-        # volumes:
-        #     - "./db:/var/lib/postgresql/data"
+        volumes:
+            - "./db:/var/lib/postgresql/data"
         environment:
             POSTGRES_DB: "nouvelle-db"
             POSTGRES_USER: "admin"
