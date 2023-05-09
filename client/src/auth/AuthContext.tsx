@@ -4,6 +4,11 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 import { User } from "types/User"
 import { auth } from "./firebase/firebase"
 
+function getPermittedUsers(): string[] {
+    return process.env["REACT_APP_PERMITTED_USERS"]!.split(" ")
+}
+const PERMITTED_USERS = getPermittedUsers()
+
 type AuthContextT = {
     authenticated: boolean
     user: User | undefined
@@ -28,6 +33,11 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
             if (authUser) {
                 const authToken = await authUser.getIdTokenResult()
+                if (PERMITTED_USERS.find((email) => email === authUser.email) === undefined) {
+                    alert(
+                        "You have not been granted permission to create an account.\n\nEmail devinleamy@gmail.com if you want one."
+                    )
+                }
                 setUser(authUser)
                 setAccessToken(authToken.token)
             } else {

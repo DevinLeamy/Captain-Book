@@ -12,7 +12,7 @@ const Navbar = () => {
     return (
         <div className="navbar-container">
             <div
-                className="navbar-left container mx-auto hover:cursor-pointer"
+                className="navbar-left hover:cursor-pointer container mx-auto"
                 onClick={() => {
                     navigate("/")
                 }}

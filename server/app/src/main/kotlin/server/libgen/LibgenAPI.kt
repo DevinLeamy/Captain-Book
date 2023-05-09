@@ -41,6 +41,8 @@ private val downloadPatterns: Map<BookCategory, List<String>> = mapOf(
     )
 )
 
+const val RESULT_LIMIT = 20
+
 class LibgenAPI {
     private val HASH_REGEX =  Regex("[A-Z0-9]{32}")
     private val JSON_QUERY = "id,title,author,filesize,extension,md5,year,language,pages,publisher,edition,coverurl"
@@ -90,7 +92,7 @@ class LibgenAPI {
             for (url in urls) {
                 val books = webScraper.scrapeSearchResults(url)
                 results.addAll(books.filter { search.filter.passes(it) })
-                if (results.size > 10) {
+                if (results.size > RESULT_LIMIT) {
                     break
                 }
             }

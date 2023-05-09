@@ -1,4 +1,4 @@
-package server.kindle
+package server.libgen.kindle
 
 import com.sendgrid.Method
 import com.sendgrid.Request
@@ -34,7 +34,7 @@ class MailClient {
 }
 
 class KindleAPI {
-    val mailClient = MailClient()
+    private val mailClient = MailClient()
 
     private fun encodeFileBase64(file: File): String {
         return Base64.getEncoder().encodeToString(file.readBytes())
@@ -45,7 +45,7 @@ class KindleAPI {
      * See: https://stackoverflow.com/questions/38599079/sendgrid-emailing-api-send-email-attachment
      */
     fun sendToKindle(email: String, book: File): Result<Unit> {
-        val from = Email("devinleamy@gmail.com")
+        val from = Email("captainbook.kindlegmail.com")
         val to = Email(email)
         val subject = "Book"
         val attachments = Attachments()

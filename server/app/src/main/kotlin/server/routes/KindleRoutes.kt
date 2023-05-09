@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import server.auth.FIREBASE_AUTH
 import server.auth.UserPrincipal
 import server.db.models.users
-import server.kindle.KindleAPI
+import server.libgen.kindle.KindleAPI
 import server.libgen.LibgenBook
 import server.store
 import server.utils.BlanketException
