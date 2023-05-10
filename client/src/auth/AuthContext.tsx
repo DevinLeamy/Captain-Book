@@ -29,20 +29,24 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const [accessToken, setAccessToken] = useState<string>()
     const [user, setUser] = useState<User>()
 
+    const userPermitted = (user: User): boolean => {
+        if (PERMITTED_USERS.find((email) => email === user.email) === undefined) {
+            alert(
+                "You have not been granted permission to create an account.\n\nEmail devinleamy@gmail.com if you want one."
+            )
+            setUser(undefined)
+            setAccessToken(undefined)
+            return false
+        }
+        return true
+    }
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-            if (authUser) {
+            if (authUser && userPermitted(authUser)) {
                 const authToken = await authUser.getIdTokenResult()
-                if (PERMITTED_USERS.find((email) => email === authUser.email) === undefined) {
-                    alert(
-                        "You have not been granted permission to create an account.\n\nEmail devinleamy@gmail.com if you want one."
-                    )
-                    setUser(undefined)
-                    setAccessToken(undefined)
-                } else {
-                    setUser(authUser)
-                    setAccessToken(authToken.token)
-                }
+                setUser(authUser)
+                setAccessToken(authToken.token)
             } else {
                 setUser(undefined)
                 setAccessToken(undefined)
@@ -57,7 +61,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             .then(async (result) => {
                 const user = result.user
                 const token = await fetchAccessToken(user)
-                if (user !== undefined && token !== undefined) {
+                if (user !== undefined && token !== undefined && userPermitted(user)) {
                     setUser(user)
                     setAccessToken(token)
                 } else {
