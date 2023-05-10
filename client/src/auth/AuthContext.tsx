@@ -37,9 +37,12 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
                     alert(
                         "You have not been granted permission to create an account.\n\nEmail devinleamy@gmail.com if you want one."
                     )
+                    setUser(undefined)
+                    setAccessToken(undefined)
+                } else {
+                    setUser(authUser)
+                    setAccessToken(authToken.token)
                 }
-                setUser(authUser)
-                setAccessToken(authToken.token)
             } else {
                 setUser(undefined)
                 setAccessToken(undefined)
